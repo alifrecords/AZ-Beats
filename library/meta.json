@@ -36,6 +36,21 @@
       "key": "",
       "bars": 2,
       "duration": 4.174
+    },
+    "files/Drum loops/Az - Bozor Groove.wav": {
+      "name": "Az - Bozor Groove",
+      "category": "Drum loops",
+      "genre": "Folk",
+      "tags": [
+        "KulobPo"
+      ],
+      "free": true,
+      "demo": false,
+      "added": "2026-10-28",
+      "order": 2,
+      "lufs": -17.8,
+      "tp": -2.7,
+      "bpm": 120
     }
   },
   "packs": {}
