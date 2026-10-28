@@ -14,12 +14,25 @@
       "demo": true,
       "category": "Drum loops",
       "added": "2026-10-28",
-      "bpm": 116.0,
+      "bpm": 116,
       "key": "G",
       "bars": 8,
       "duration": 16.552,
       "lufs": -14.7,
       "tp": -1.2
+    },
+    "files/Loops/Full Mix 115.wav": {
+      "name": "Full Mix 115",
+      "category": "Loops",
+      "genre": "",
+      "tags": [],
+      "free": true,
+      "demo": false,
+      "added": "2026-10-28",
+      "order": 1,
+      "lufs": -30.3,
+      "tp": -12.1,
+      "bpm": 115
     }
   },
   "packs": {}
