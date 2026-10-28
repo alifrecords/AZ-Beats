@@ -52,6 +52,26 @@
   .stat b{display:block;font-size:22px}
   .stat span{color:var(--muted);font-size:11px;letter-spacing:.08em}
   a{color:var(--accent)}
+  .item{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:12px}
+  .ihead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .ihead .meta{flex:1 1 220px;min-width:0}
+  .ihead .meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ihead .meta small{color:var(--muted)}
+  .round{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--raised);color:var(--text);font-size:15px;cursor:pointer;flex:0 0 auto}
+  .round.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+  .qual{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--raised)}
+  .qual i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .q-good i{background:#3ccf6e}.q-good{color:#7ee2a0}
+  .q-mid i{background:#f2c94c}.q-mid{color:#f6d77a}
+  .q-bad i{background:#ef5350}.q-bad{color:#ff9a98}
+  canvas.wave{width:100%;height:110px;display:block;margin-top:10px;border-radius:8px;background:#0b0c0e;cursor:crosshair;touch-action:none}
+  .itools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--text2)}
+  .itools input[type=number]{width:76px;height:34px}
+  .itools .btn{height:36px;padding:0 12px}
+  .reasons{font-size:12px;color:var(--muted);margin-top:6px}
+  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 10px}
+  .bar div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 </style>
 </head>
 <body>
@@ -91,11 +111,11 @@
 <section id="upload" class="on">
   <div class="card">
     <h2>Yangi loop va sample yuklash</h2>
-    <p class="sub">Fayl yuklangach GitHub o'zi BPM, tonallik va taktni aniqlaydi, WAV'ni FLAC'ga o'giradi va katalogni yangilaydi (1–2 daqiqa). Fayl nomida BPM va tonallik bo'lsa ("Az - Doira 104 Am"), o'sha ishlatiladi.</p>
+    <p class="sub">Har bir faylni yuklashdan oldin tinglang, kerak bo'lsa kesing. LUFS va sifat darhol ko'rinadi: <span class="q-good"><i class="dot" style="background:#3ccf6e"></i>yaxshi</span> · <span class="q-mid"><i class="dot" style="background:#f2c94c"></i>o'rta</span> · <span class="q-bad"><i class="dot" style="background:#ef5350"></i>yomon</span>. To'lqin ustida sichqoncha bilan qismni belgilang, chetlarini suring, bir marta bosish shu joydan tinglatadi. Yuklangach GitHub BPM, tonallik va taktni o'zi aniqlaydi (1–2 daqiqa).</p>
     <div class="drop" id="drop">Fayllarni shu yerga tashlang yoki bosib tanlang<br><small style="color:var(--muted)">WAV, AIFF, FLAC, MP3 · bitta fayl 50 MB gacha</small></div>
     <input type="file" id="files" multiple accept=".wav,.aif,.aiff,.flac,.mp3,.ogg" hidden>
-    <div id="picked" class="sub" style="margin-top:10px"></div>
-    <div class="row" style="margin-top:6px">
+    <div id="items"></div>
+    <div class="row" style="margin-top:14px">
       <label>Kategoriya<input type="text" id="upCat" list="cats" placeholder="Drum loops"></label>
       <label>Janr<input type="text" id="upGenre" list="genres" placeholder="O'zbek pop"></label>
       <label>Teglar (vergul bilan)<input type="text" id="upTags" placeholder="doira, lazgi"></label>
@@ -104,12 +124,13 @@
       <label class="chk"><input type="checkbox" id="upFree">Bepul</label>
       <label class="chk"><input type="checkbox" id="upDemo">Namuna (eng yaxshilar)</label>
       <div style="flex:1"></div>
+      <button class="btn" id="testConn">Ulanishni tekshirish</button>
       <button class="btn primary" id="uploadBtn" disabled>Yuklash</button>
     </div>
     <datalist id="cats"><option>Drum loops</option><option>Percussion</option><option>Bass</option><option>Melodik</option><option>One-shot</option><option>FX</option><option>Vokal</option></datalist>
     <datalist id="genres"></datalist>
   </div>
-  <div class="card"><h2>Jarayon</h2><div id="log">Tayyor.</div></div>
+  <div class="card"><h2>Jarayon</h2><div class="bar"><div id="prog"></div></div><div id="log">Tayyor.</div></div>
 </section>
 
 <section id="library">
@@ -121,7 +142,7 @@
     </div>
     <div class="tbl">
       <table>
-        <thead><tr><th>NOMI</th><th>KATEGORIYA</th><th>JANR</th><th>BPM</th><th>TON</th><th>BEPUL</th><th>NAMUNA</th><th>QO'SHILGAN</th><th></th></tr></thead>
+        <thead><tr><th>NOMI</th><th>KATEGORIYA</th><th>JANR</th><th>BPM</th><th>TON</th><th>LUFS</th><th>BEPUL</th><th>NAMUNA</th><th>QO'SHILGAN</th><th></th></tr></thead>
         <tbody id="libBody"></tbody>
       </table>
     </div>
@@ -164,6 +185,7 @@
 
 </main>
 <script src="license.js"></script>
+<script src="audio.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -198,7 +220,12 @@
     const c = cfg();
     if (!c.token) throw new Error("Token kiritilmagan (Sozlamalar)");
     const url = `https://api.github.com/repos/${c.repo}/contents/${encPath(path)}` + (method === "GET" ? `?ref=${encodeURIComponent(c.branch)}&t=${Date.now()}` : "");
-    const r = await fetch(url, { method, headers: { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json" }, body: body ? JSON.stringify({ ...body, branch: c.branch }) : undefined });
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 120000);
+    let r;
+    try {
+      r = await fetch(url, { method, signal: ctl.signal, headers: { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json" }, body: body ? JSON.stringify({ ...body, branch: c.branch }) : undefined });
+    } finally { clearTimeout(timer); }
     if (r.status === 404 && method === "GET") return null;
     if (!r.ok) throw new Error(`${method} ${path}: ${r.status} ${(await r.text()).slice(0, 200)}`);
     return r.status === 204 ? {} : r.json();
@@ -253,44 +280,323 @@
     catch (e) { alert(e.message); }
   };
 
-  // ---------- upload
-  let picked = [];
+  // ---------- upload: preview, trim, loudness, robust transfer
+  let items = [];
+  let actx = null, playing = null;
   const drop = $("drop");
+  const fmtT = (s) => s.toFixed(2) + " s";
+  const isNet = (e) => e && (e.name === "TypeError" || e.name === "AbortError");
   drop.onclick = () => $("files").click();
-  $("files").onchange = (e) => setPicked([...e.target.files]);
+  $("files").onchange = (e) => { addFiles([...e.target.files]); e.target.value = ""; };
   drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
   drop.ondragleave = () => drop.classList.remove("over");
-  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); setPicked([...e.dataTransfer.files]); };
-  function setPicked(list) {
-    picked = list.filter((f) => /\.(wav|aiff?|flac|mp3|ogg)$/i.test(f.name));
-    $("picked").textContent = picked.length ? picked.map((f) => `${f.name} (${(f.size / 1e6).toFixed(1)} MB)`).join(", ") : "";
-    $("uploadBtn").disabled = !picked.length;
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles([...e.dataTransfer.files]); };
+
+  function nameInfo(stem) {
+    const m = stem.match(/(?:^|\D)(\d{2,3})\s*(?:bpm)?(?!\d)/i);
+    const v = m ? parseInt(m[1], 10) : 0;
+    return v >= 60 && v <= 200 ? v : 0;
   }
+
+  async function addFiles(list) {
+    for (const f of list) {
+      if (!/\.(wav|aiff?|flac|mp3|ogg)$/i.test(f.name)) { log(`${f.name}: audio emas, o'tkazildi`, "err"); continue; }
+      if (f.size > 50e6) { log(`${f.name}: 50 MB dan katta`, "err"); continue; }
+      const it = { id: Math.random().toString(36).slice(2), file: f, name: f.name, trimmed: false };
+      items.push(it);
+      renderItem(it, true);
+      try {
+        const d = await AZAudio.decode(f);
+        it.orig = d; it.channels = d.channels; it.sr = d.sampleRate;
+        it.sel = [0, it.channels[0].length];
+        it.bpm = nameInfo(f.name.replace(/\.[^.]+$/, ""));
+        it.an = AZAudio.analyse(it.channels, it.sr);
+      } catch (e) {
+        it.error = "Faylni o'qib bo'lmadi: " + e.message;
+      }
+      renderItem(it);
+    }
+    $("uploadBtn").disabled = !items.some((i) => i.channels);
+  }
+
+  function renderItem(it, loading) {
+    let el = document.getElementById("it_" + it.id);
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "item"; el.id = "it_" + it.id;
+      $("items").appendChild(el);
+    }
+    if (loading || !it.channels) {
+      el.innerHTML = `<div class="ihead"><div class="meta"><b>${it.name}</b><small>${it.error ? `<span class="err">${it.error}</span>` : "Tahlil qilinmoqda..."}</small></div>
+        <button class="btn" data-rm>Olib tashlash</button></div>`;
+      el.querySelector("[data-rm]").onclick = () => removeItem(it);
+      return;
+    }
+    const a = it.an, len = it.channels[0].length / it.sr;
+    el.innerHTML = `
+      <div class="ihead">
+        <button class="round" data-play title="Tinglash">&#9654;</button>
+        <div class="meta"><b>${it.trimmed ? it.name.replace(/\.[^.]+$/, "") + ".wav" : it.name}</b>
+          <small>${(it.sr / 1000).toFixed(1)} kHz · ${fmtT(len)} · ${((it.trimmed ? it.channels[0].length * it.channels.length * 3 + 44 : it.file.size) / 1e6).toFixed(1)} MB${it.trimmed ? " · <b style='display:inline;color:var(--accentTxt)'>kesilgan → WAV 24-bit</b>" : ""}</small></div>
+        <div class="qual q-${a.rating.level}"><i></i>${a.lufs.toFixed(1)} LUFS · ${a.tp.toFixed(1)} dBTP · ${a.rating.text}</div>
+        <button class="btn" data-rm>Olib tashlash</button>
+      </div>
+      <canvas class="wave"></canvas>
+      <div class="itools">
+        <span data-seltxt></span>
+        <label class="chk" style="font-size:12px">BPM <input type="number" min="0" max="250" step="0.01" data-bpm value="${it.bpm || ""}" placeholder="—"></label>
+        <label class="chk" style="font-size:12px"><input type="checkbox" data-snap ${it.snap ? "checked" : ""}>Taktga moslash</label>
+        <label class="chk" style="font-size:12px"><input type="checkbox" data-fade ${it.fade !== false ? "checked" : ""}>Fade 3 ms</label>
+        <span style="flex:1"></span>
+        <button class="btn" data-selplay>Tanlovni tinglash</button>
+        <button class="btn" data-all>Hammasini tanlash</button>
+        <button class="btn teal" data-cut>Kesish</button>
+        ${it.trimmed ? '<button class="btn" data-undo>Asl holiga</button>' : ""}
+      </div>
+      <div class="reasons" data-reasons>Sifat: ${a.rating.reasons.join(", ")}${a.rating.level === "bad" ? " — plaginda AZ Modernize bilan tuzatish tavsiya etiladi" : ""}</div>`;
+    const cv = el.querySelector("canvas");
+    it.canvas = cv;
+    it.peaks = null;
+    el.querySelector("[data-rm]").onclick = () => removeItem(it);
+    el.querySelector("[data-play]").onclick = () => togglePlay(it, false);
+    el.querySelector("[data-selplay]").onclick = () => togglePlay(it, true);
+    el.querySelector("[data-all]").onclick = () => { it.sel = [0, it.channels[0].length]; updateSel(it); };
+    el.querySelector("[data-cut]").onclick = () => cut(it);
+    const undo = el.querySelector("[data-undo]");
+    if (undo) undo.onclick = () => { stop(); it.channels = it.orig.channels; it.trimmed = false; it.sel = [0, it.channels[0].length]; it.an = AZAudio.analyse(it.channels, it.sr); renderItem(it); };
+    el.querySelector("[data-bpm]").onchange = (e) => { it.bpm = parseFloat(e.target.value) || 0; snapSel(it); updateSel(it); };
+    el.querySelector("[data-snap]").onchange = (e) => { it.snap = e.target.checked; snapSel(it); updateSel(it); };
+    el.querySelector("[data-fade]").onchange = (e) => { it.fade = e.target.checked; };
+    attachCanvas(it);
+    updateSel(it);
+  }
+
+  function removeItem(it) {
+    if (playing && playing.it === it) stop();
+    items = items.filter((x) => x !== it);
+    const el = document.getElementById("it_" + it.id); if (el) el.remove();
+    $("uploadBtn").disabled = !items.some((i) => i.channels);
+  }
+
+  // ---- waveform + selection
+  function draw(it, head) {
+    const cv = it.canvas; if (!cv || !cv.isConnected) return;
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); it.peaks = null; }
+    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = it.channels[0].length, pts = Math.max(50, Math.floor(w / 2));
+    if (!it.peaks) it.peaks = AZAudio.peaks(it.channels, pts);
+    g.clearRect(0, 0, w, h);
+    const x0 = it.sel[0] / n * w, x1 = it.sel[1] / n * w;
+    g.fillStyle = "rgba(242,163,58,0.10)"; g.fillRect(x0, 0, x1 - x0, h);
+    let mx = 1e-4; for (const v of it.peaks) mx = Math.max(mx, Math.abs(v));
+    const bw = w / pts;
+    for (let i = 0; i < pts; i++) {
+      const lo = it.peaks[i * 2] / mx, hi = it.peaks[i * 2 + 1] / mx, x = i * bw;
+      const inSel = x >= x0 && x <= x1;
+      g.fillStyle = inSel ? "#f2a33a" : "#4a525c";
+      g.fillRect(x, h / 2 - hi * h * 0.45, Math.max(1, bw - 0.5), Math.max(1, (hi - lo) * h * 0.45));
+    }
+    // bar grid when BPM known
+    if (it.bpm > 0) {
+      const bar = 240 / it.bpm * it.sr;
+      g.fillStyle = "rgba(255,255,255,0.12)";
+      for (let p = bar; p < n; p += bar) g.fillRect(p / n * w, 0, 1, h);
+    }
+    g.fillStyle = "#e8eaed"; g.fillRect(x0, 0, 2, h); g.fillRect(x1 - 2, 0, 2, h);
+    if (head != null) { g.fillStyle = "#3bc9b0"; g.fillRect(head / n * w, 0, 2, h); }
+  }
+
+  function snapSel(it) {
+    if (!it.snap || !(it.bpm > 0)) return;
+    const n = it.channels[0].length, beat = 60 / it.bpm * it.sr, bar = beat * 4;
+    let a = Math.round(it.sel[0] / beat) * beat;
+    let bars = Math.max(1, Math.round((it.sel[1] - a) / bar));
+    if (a + bars * bar > n + beat * 0.25) bars = Math.max(1, Math.floor((n - a) / bar + 0.01));
+    it.sel = [Math.max(0, Math.round(a)), Math.min(n, Math.round(a + bars * bar))];
+  }
+
+  function updateSel(it) {
+    const el = document.getElementById("it_" + it.id); if (!el) return;
+    const [a, b] = it.sel, sr = it.sr;
+    let t = `Tanlov: ${fmtT(a / sr)} – ${fmtT(b / sr)} (${fmtT((b - a) / sr)})`;
+    if (it.bpm > 0) t += ` · ${((b - a) / sr * it.bpm / 240).toFixed(2)} takt`;
+    el.querySelector("[data-seltxt]").textContent = t;
+    draw(it);
+  }
+
+  function attachCanvas(it) {
+    const cv = it.canvas;
+    let mode = null, anchor = 0, moved = false;
+    const pos = (e) => { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * it.channels[0].length; };
+    cv.onpointerdown = (e) => {
+      cv.setPointerCapture(e.pointerId);
+      const p = pos(e), n = it.channels[0].length, tol = n * 8 / cv.clientWidth;
+      moved = false;
+      if (Math.abs(p - it.sel[0]) < tol) mode = "a";
+      else if (Math.abs(p - it.sel[1]) < tol) mode = "b";
+      else { mode = "new"; anchor = p; }
+    };
+    cv.onpointermove = (e) => {
+      if (!mode) return;
+      const p = Math.round(pos(e));
+      moved = true;
+      if (mode === "a") it.sel[0] = Math.min(p, it.sel[1] - 1);
+      else if (mode === "b") it.sel[1] = Math.max(p, it.sel[0] + 1);
+      else it.sel = [Math.round(Math.min(anchor, p)), Math.round(Math.max(anchor, p))];
+      updateSel(it);
+    };
+    cv.onpointerup = (e) => {
+      if (mode === "new" && !moved) { play(it, Math.round(pos(e)), it.channels[0].length); }
+      else { snapSel(it); updateSel(it); }
+      mode = null;
+    };
+    new ResizeObserver(() => draw(it)).observe(cv);
+  }
+
+  // ---- playback
+  function stop() {
+    if (playing) {
+      try { playing.src.stop(); } catch (e) {}
+      const el = document.getElementById("it_" + playing.it.id);
+      if (el) el.querySelector("[data-play]")?.classList.remove("on");
+      draw(playing.it);
+      playing = null;
+    }
+  }
+  function play(it, from, to, loop) {
+    stop();
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const n = to - from; if (n <= 0) return;
+    const buf = actx.createBuffer(2, n, it.sr);
+    for (let c = 0; c < 2; c++) buf.copyToChannel(it.channels[c].subarray(from, to), c);
+    const src = actx.createBufferSource(); src.buffer = buf; src.loop = !!loop;
+    src.connect(actx.destination); src.start();
+    const t0 = actx.currentTime;
+    playing = { it, src, from, n, t0, loop };
+    const el = document.getElementById("it_" + it.id);
+    el.querySelector("[data-play]").classList.add("on");
+    src.onended = () => { if (playing && playing.src === src) stop(); };
+    const tick = () => {
+      if (!playing || playing.src !== src) return;
+      let el2 = (actx.currentTime - t0) * it.sr;
+      if (loop) el2 %= n;
+      draw(it, from + Math.min(el2, n));
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  function togglePlay(it, selOnly) {
+    if (playing && playing.it === it) { stop(); return; }
+    if (selOnly) play(it, it.sel[0], it.sel[1], true);
+    else play(it, 0, it.channels[0].length, false);
+  }
+
+  function cut(it) {
+    const [a, b] = it.sel, n = it.channels[0].length;
+    if (a <= 0 && b >= n) { alert("Avval to'lqin ustida sichqoncha bilan qism tanlang"); return; }
+    stop();
+    const fade = it.fade !== false ? Math.min(Math.floor((b - a) / 2), Math.round(0.003 * it.sr)) : 0;
+    it.channels = it.channels.map((ch) => {
+      const out = ch.slice(a, b);
+      for (let i = 0; i < fade; i++) { const g = i / fade; out[i] *= g; out[out.length - 1 - i] *= g; }
+      return out;
+    });
+    it.trimmed = true;
+    it.sel = [0, it.channels[0].length];
+    it.an = AZAudio.analyse(it.channels, it.sr);
+    renderItem(it);
+    log(`${it.name}: kesildi (${fmtT((b - a) / it.sr)}), LUFS ${it.an.lufs.toFixed(1)}`, "ok");
+  }
+
+  // ---- robust transfer: retries, timeouts and automatic chunking
+  async function putBinary(path, bytes) {
+    let lastErr;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const existing = await gh("GET", path);
+        let bin = ""; const step = 0x8000;
+        for (let i = 0; i < bytes.length; i += step) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+        return await gh("PUT", path, { message: "Yuklash: " + path.split("/").pop(), content: btoa(bin), ...(existing ? { sha: existing.sha } : {}) });
+      } catch (e) {
+        lastErr = e;
+        if (!isNet(e) && !/409|422|5\d\d/.test(e.message)) throw e;
+        await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+      }
+    }
+    throw lastErr;
+  }
+
+  async function putFileRobust(path, bytes, onProgress) {
+    const MIN = 128 * 1024;
+    let chunk = store.get("chunkSize", 4 * 1024 * 1024);
+    for (;;) {
+      try {
+        if (bytes.length <= chunk) { await putBinary(path, bytes); onProgress(1); return; }
+        const n = Math.ceil(bytes.length / chunk), pad = (x) => String(x).padStart(3, "0");
+        log(`  ${n} bo'lakda yuborilmoqda (${Math.round(chunk / 1024)} KB)`);
+        for (let i = 0; i < n; i++) {
+          await putBinary(`${path}.part-${pad(i + 1)}-of-${pad(n)}`, bytes.subarray(i * chunk, Math.min(bytes.length, (i + 1) * chunk)));
+          onProgress((i + 1) / n);
+        }
+        return;
+      } catch (e) {
+        if (!isNet(e) || chunk <= MIN) throw e;
+        chunk = Math.max(MIN, chunk >> 1);
+        store.set("chunkSize", chunk);
+        log(`  Tarmoq so'rovni uzdi — kichikroq bo'laklarga o'tilmoqda (${Math.round(chunk / 1024)} KB)`, "err");
+      }
+    }
+  }
+
+  $("testConn").onclick = async () => {
+    const c = cfg();
+    if (!c.token) return alert("Avval Sozlamalar bo'limida tokenni kiriting");
+    try {
+      const r = await fetch(`https://api.github.com/repos/${c.repo}`, { headers: { Authorization: "Bearer " + c.token } });
+      const j = await r.json();
+      if (!r.ok) throw new Error(r.status + " " + j.message);
+      if (!j.permissions || !j.permissions.push) throw new Error("Tokenda yozish huquqi yo'q (Contents: Read and write kerak)");
+      log(`Ulanish yaxshi: ${j.full_name}, yozish huquqi bor`, "ok");
+    } catch (e) {
+      log("Ulanish xatosi: " + (isNet(e) ? "internet / VPN / antivirus GitHub'ga ulanishni to'sdi" : e.message), "err");
+    }
+  };
+
   $("uploadBtn").onclick = async () => {
     const cat = ($("upCat").value.trim() || "Loops").replace(/[\\/]/g, "-");
     const genre = $("upGenre").value.trim();
     const tags = $("upTags").value.split(",").map((s) => s.trim()).filter(Boolean);
+    const ready = items.filter((i) => i.channels);
+    if (!ready.length) return;
+    stop();
     $("uploadBtn").disabled = true;
+    const prog = $("prog");
     try {
       await loadMeta();
       const today = new Date().toISOString().slice(0, 10);
-      for (const f of picked) {
-        if (f.size > 50e6) { log(`${f.name}: 50 MB dan katta, o'tkazib yuborildi`, "err"); continue; }
-        const path = `library/files/${cat}/${f.name}`;
-        log(`Yuklanmoqda: ${f.name} ...`);
-        const existing = await gh("GET", path);
-        await gh("PUT", path, { message: "Yangi: " + f.name, content: await b64FromFile(f), ...(existing ? { sha: existing.sha } : {}) });
-        const key = `files/${cat}/${f.name}`;
+      let done = 0;
+      for (const it of ready) {
+        const fname = it.trimmed ? it.name.replace(/\.[^.]+$/, "") + ".wav" : it.name;
+        const bytes = it.trimmed ? AZAudio.encodeWav24(it.channels, it.sr) : it.orig.bytes;
+        const key = `files/${cat}/${fname}`;
+        log(`Yuklanmoqda: ${fname} (${(bytes.length / 1e6).toFixed(1)} MB, ${it.an.lufs.toFixed(1)} LUFS)`);
+        await putFileRobust("library/" + key, bytes, (f) => { prog.style.width = ((done + f) / ready.length * 100).toFixed(0) + "%"; });
         const old = meta.items[key] || {};
-        meta.items[key] = { ...old, name: old.name || f.name.replace(/\.[^.]+$/, ""), category: cat, genre: genre || old.genre || "",
-          tags: tags.length ? tags : (old.tags || []), free: $("upFree").checked, demo: $("upDemo").checked, added: old.added || today };
-        log(`OK: ${f.name}`, "ok");
+        meta.items[key] = { ...old, name: old.name || fname.replace(/\.[^.]+$/, ""), category: cat, genre: genre || old.genre || "",
+          tags: tags.length ? tags : (old.tags || []), free: $("upFree").checked, demo: $("upDemo").checked, added: old.added || today,
+          ...(it.bpm > 0 ? { bpm: it.bpm } : {}) };
+        done++;
+        log(`OK: ${fname}`, "ok");
+        removeItem(it);
       }
-      await saveMeta(`Kutubxona: ${picked.length} ta fayl`);
-      log("meta.json saqlandi. GitHub Actions katalogni 1-2 daqiqada yangilaydi.", "ok");
-      setPicked([]);
-    } catch (e) { log(e.message, "err"); }
-    $("uploadBtn").disabled = !picked.length;
+      await saveMeta(`Kutubxona: ${done} ta fayl`);
+      prog.style.width = "100%";
+      log("Tayyor. GitHub katalogni 1-2 daqiqada yangilaydi.", "ok");
+    } catch (e) {
+      log((isNet(e) ? "Tarmoq xatosi: so'rov GitHub'ga yetib bormadi (internet, VPN yoki antivirus). Qayta urinib ko'ring yoki boshqa tarmoqdan yuklang. " : "Xato: ") + e.message, "err");
+    }
+    $("uploadBtn").disabled = !items.some((i) => i.channels);
   };
 
   // ---------- library table
@@ -301,6 +607,12 @@
       catalog = (await getJson("library/catalog.json", { items: [] })).data;
       renderLibrary();
     } catch (e) { $("libInfo").textContent = e.message; }
+  }
+  function lufsCell(l, tp) {
+    if (l == null) return '<span class="sub">tahlil kutilmoqda</span>';
+    const r = AZAudio.rate(l, tp ?? -6, 0, 10);
+    const col = { good: "#3ccf6e", mid: "#f2c94c", bad: "#ef5350" }[r.level];
+    return `<span title="${r.reasons.join(", ")}"><i class="dot" style="background:${col}"></i>${Number(l).toFixed(1)}</span>`;
   }
   function renderLibrary() {
     const byFile = {};
@@ -317,11 +629,12 @@
         <td><input type="text" data-f="genre" value="${esc(e.genre)}"></td>
         <td><input type="text" data-f="bpm" value="${esc(e.bpm ?? c.bpm ?? "")}" style="width:70px"></td>
         <td><input type="text" data-f="key" value="${esc(e.key ?? c.key ?? "")}" style="width:56px"></td>
+        <td style="white-space:nowrap">${lufsCell(e.lufs ?? c.lufs, e.tp ?? c.tp)}</td>
         <td><input type="checkbox" data-f="free" ${e.free ? "checked" : ""}></td>
         <td><input type="checkbox" data-f="demo" ${e.demo ? "checked" : ""}></td>
         <td class="mono">${esc(e.added)}</td>
         <td><button class="btn danger" data-del>O'chirish</button></td></tr>`;
-    }).join("") || `<tr><td colspan="9" class="sub">Hali fayl yo'q</td></tr>`;
+    }).join("") || `<tr><td colspan="10" class="sub">Hali fayl yo'q</td></tr>`;
     $("libBody").querySelectorAll("tr[data-file]").forEach((tr) => {
       const file = tr.dataset.file;
       tr.querySelectorAll("[data-f]").forEach((inp) => inp.onchange = () => {
