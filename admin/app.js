@@ -842,6 +842,52 @@
     a.download = "az-betas-kalitlar.csv"; a.click();
   };
 
+  // ------------------------------------------------------- diagnostics ----
+  let diagText = "";
+  $("diagRun").onclick = async () => {
+    const c = cfg();
+    const body = $("diagBody"); body.innerHTML = ""; diagText = `AZ BETAS diagnostika ${new Date().toISOString()}\n${navigator.userAgent}\n`;
+    $("diagRun").disabled = true; $("diagCopy").disabled = true;
+    const row = (i, name) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${i}</td><td>${esc(name)}</td><td>...</td><td></td>`;
+      body.appendChild(tr); return tr;
+    };
+    const run = async (i, name, fn) => {
+      const tr = row(i, name), t0 = performance.now();
+      let ok = false, msg;
+      try { msg = await fn(); ok = true; }
+      catch (e) { msg = (e.name || "Error") + ": " + e.message; }
+      const ms = Math.round(performance.now() - t0);
+      tr.children[2].innerHTML = ok ? `<span class="ok">OK</span> ${esc(msg || "")}` : `<span class="err">XATO</span> ${esc(msg)}`;
+      tr.children[3].textContent = ms + " ms";
+      diagText += `${i}. ${name}: ${ok ? "OK" : "XATO"} ${msg || ""} (${ms} ms)\n`;
+      return ok;
+    };
+    const auth = { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json" };
+    const testPut = async (size) => {
+      const path = `library/.diag/test-${size}-${Date.now()}.bin`;
+      const bytes = new Uint8Array(size); for (let i = 0; i < size; i++) bytes[i] = (i * 31) & 255;
+      await putBinary(path, bytes);
+      await deletePath(path, "diagnostika").catch(() => {});
+      return `${(size / 1024).toFixed(0)} KB yuborildi`;
+    };
+    await run(1, "Internet (api.github.com, tokensiz)", async () => { const r = await fetch("https://api.github.com/zen"); return "HTTP " + r.status; });
+    await run(2, "Token va repo", async () => {
+      if (!c.token) throw new Error("token kiritilmagan");
+      const r = await fetch(`https://api.github.com/repos/${c.repo}`, { headers: auth });
+      const j = await r.json();
+      if (!r.ok) throw new Error(r.status + " " + j.message);
+      return `${j.full_name}, yozish: ${j.permissions && j.permissions.push ? "bor" : "YO'Q"}`;
+    });
+    await run(3, "O'qish (meta.json)", async () => { const f = await gh("GET", "library/meta.json"); return f ? "o'qildi" : "fayl yo'q"; });
+    await run(4, "Yozish: 1 KB", () => testPut(1024));
+    await run(5, "Yozish: 256 KB", () => testPut(256 * 1024));
+    await run(6, "Yozish: 2 MB", () => testPut(2 * 1024 * 1024));
+    $("diagRun").disabled = false; $("diagCopy").disabled = false;
+  };
+  $("diagCopy").onclick = () => navigator.clipboard.writeText(diagText);
+
   // ------------------------------------------------------------- init ----
   if (store.get("token", "")) loadMeta().then(refreshPackSelect).catch(() => {});
   refreshPackSelect();
