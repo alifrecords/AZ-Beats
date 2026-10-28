@@ -56,6 +56,21 @@
       "key": "",
       "bars": 4,
       "duration": 7.328
+    },
+    "files/Drum loops/Az - Qora Tog' Beat 130.wav": {
+      "name": "Az - Qora Tog' Beat 130",
+      "category": "Drum loops",
+      "genre": "Folk",
+      "tags": [
+        "Raqs"
+      ],
+      "free": true,
+      "demo": false,
+      "added": "2026-10-28",
+      "order": 4,
+      "lufs": -11.1,
+      "tp": -1.2,
+      "bpm": 130
     }
   },
   "packs": {}
