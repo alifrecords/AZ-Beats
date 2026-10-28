@@ -71,6 +71,24 @@
       "lufs": -11.1,
       "tp": -1.2,
       "bpm": 130
+    },
+    "files/Drum loops/Az - Karvon Shuffle 87.wav": {
+      "name": "Az - Karvon Shuffle 87",
+      "category": "Drum loops",
+      "genre": "Groove / Shuffle",
+      "tags": [
+        "Beats",
+        "Loops",
+        "Percussion",
+        "Kits"
+      ],
+      "free": true,
+      "demo": false,
+      "added": "2026-10-28",
+      "order": 5,
+      "lufs": -11.1,
+      "tp": -1.2,
+      "bpm": 87
     }
   },
   "packs": {}
