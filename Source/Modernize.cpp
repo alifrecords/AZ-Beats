@@ -434,7 +434,7 @@ static void limit (juce::AudioBuffer<float>& b, double sr, float ceilingDb)
     {
         acc += h[n];
         if (n >= (size_t) L + 1) acc -= h[n - (size_t) L - 1];
-        g[n] = (float) (acc / (double) juce::jmin<size_t> (n + 1, (size_t) L + 1));
+        g[n] = (float) (acc / (double) std::min<size_t> (n + 1, (size_t) L + 1));
     }
 
     // pass 2: apply gain (advanced by L so it lines up with the peaks), downsample
@@ -450,7 +450,7 @@ static void limit (juce::AudioBuffer<float>& b, double sr, float ceilingDb)
         auto up = os2.processSamplesUp (blk);
         for (size_t i = 0; i < up.getNumSamples(); ++i, ++gi)
         {
-            float gain = g[juce::jmin (N - 1, gi + (size_t) L)];
+            float gain = g[std::min (N - 1, gi + (size_t) L)];
             up.setSample (0, (int) i, up.getSample (0, (int) i) * gain);
             up.setSample (1, (int) i, up.getSample (1, (int) i) * gain);
         }
