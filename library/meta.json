@@ -37,7 +37,7 @@
       "bars": 2,
       "duration": 4.174
     },
-    "files/Drum loops/Az - Bozor Groove.wav": {
+    "files/Drum loops/Az - Bozor Groove.flac": {
       "name": "Az - Bozor Groove",
       "category": "Drum loops",
       "genre": "Folk",
@@ -50,7 +50,10 @@
       "order": 2,
       "lufs": -17.8,
       "tp": -2.7,
-      "bpm": 120
+      "bpm": 120,
+      "key": "",
+      "bars": 8,
+      "duration": 17.0
     }
   },
   "packs": {}
