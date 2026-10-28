@@ -17,7 +17,10 @@
       "bpm": 116.0,
       "key": "G",
       "bars": 8,
-      "duration": 16.552
+      "duration": 16.552,
+      "lufs": -14.7,
+      "tp": -1.2
     }
-  }
+  },
+  "packs": {}
 }

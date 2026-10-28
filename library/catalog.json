@@ -1,6 +1,7 @@
 {
- "version": 1,
- "updated": "2026-10-28T11:44:42Z",
+ "version": 2,
+ "packs": [],
+ "updated": "2026-10-28T15:27:56Z",
  "freeLimit": 10,
  "items": [
   {
@@ -18,11 +19,15 @@
    "bpm": 116.0,
    "bars": 8,
    "key": "G",
-   "free": true,
    "demo": true,
+   "free": true,
+   "pack": "",
+   "order": 1,
    "added": "2026-10-28",
    "size": 3533056,
-   "duration": 16.552
+   "duration": 16.552,
+   "lufs": -14.7,
+   "tp": -1.2
   }
  ]
 }
