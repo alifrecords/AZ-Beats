@@ -1,7 +1,7 @@
 {
  "version": 2,
  "packs": [],
- "updated": "2026-10-28T19:01:16Z",
+ "updated": "2026-10-28T20:06:07Z",
  "freeLimit": 10,
  "items": [
   {
@@ -49,6 +49,53 @@
    "tp": -1.2
   },
   {
+   "id": "az-qora-tog-beat-130",
+   "name": "Az - Qora Tog' Beat 130",
+   "file": "files/Drum loops/Az - Qora Tog' Beat 130.flac",
+   "category": "Drum loops",
+   "genre": "Folk",
+   "tags": [
+    "Raqs"
+   ],
+   "bpm": 130,
+   "bars": 4,
+   "key": "",
+   "demo": false,
+   "free": true,
+   "pack": "",
+   "order": 3,
+   "added": "2026-10-28",
+   "size": 1515941,
+   "duration": 7.385,
+   "lufs": -11.1,
+   "tp": -1.2
+  },
+  {
+   "id": "az-karvon-shuffle-87",
+   "name": "Az - Karvon Shuffle 87",
+   "file": "files/Drum loops/Az - Karvon Shuffle 87.flac",
+   "category": "Drum loops",
+   "genre": "Groove / Shuffle",
+   "tags": [
+    "Beats",
+    "Loops",
+    "Percussion",
+    "Kits"
+   ],
+   "bpm": 87,
+   "bars": 2,
+   "key": "",
+   "demo": false,
+   "free": true,
+   "pack": "",
+   "order": 4,
+   "added": "2026-10-28",
+   "size": 1146883,
+   "duration": 5.517,
+   "lufs": -11.1,
+   "tp": -1.2
+  },
+  {
    "id": "az-grv-loops-no-ride-116-g",
    "name": "Az - GrV Loops (no ride) 116 G",
    "file": "files/Drum loops/Az - GrV Loops no ride 116 G.flac",
@@ -66,7 +113,7 @@
    "demo": true,
    "free": true,
    "pack": "",
-   "order": 3,
+   "order": 5,
    "added": "2026-10-28",
    "size": 3533056,
    "duration": 16.552,
