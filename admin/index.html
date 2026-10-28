@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AZ BETAS Admin</title>
+<style>
+  :root{--bg:#0f1113;--panel:#15181b;--panel2:#181b1f;--raised:#1c2024;--line:#262a30;--line2:#2e333a;
+    --text:#e8eaed;--text2:#c9cfd6;--muted:#9aa3ad;--accent:#f2a33a;--accentDim:#2b2418;--accentTxt:#f2c27a;
+    --teal:#3bc9b0;--tealDim:#13342e;--tealTxt:#5fe0c6;--blue:#8fb6ff;--blueDim:#1e2a3f;--red:#e86f6f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+  header{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .logo{width:36px;height:36px;border-radius:8px;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700}
+  header h1{margin:0;font-size:18px;letter-spacing:.06em}
+  header small{display:block;color:var(--muted);font-size:10px;letter-spacing:.18em}
+  nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+  nav button{background:transparent;color:var(--muted);border:0;border-radius:8px;padding:0 14px;height:40px;font:500 13px inherit;cursor:pointer}
+  nav button.on{background:#23272c;color:var(--text);font-weight:600}
+  main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+  section{display:none}section.on{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+  h2{margin:0 0 4px;font-size:20px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+  label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+  input[type=text],input[type=password],input[type=number],select,textarea{height:40px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);font:13px inherit}
+  textarea{height:auto;padding:10px 12px;font-family:ui-monospace,monospace;font-size:12px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .row>*{flex:1 1 180px}
+  .btn{height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--line2);background:var(--raised);color:var(--text);font:600 13px inherit;cursor:pointer;flex:0 0 auto}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  .btn.teal{background:var(--tealDim);border-color:#1f5a50;color:var(--tealTxt)}
+  .btn.danger{background:#3a1d1d;border-color:#5a2a2a;color:#ffb3b3}
+  .btn:disabled{opacity:.45;cursor:default}
+  .chk{flex-direction:row;align-items:center;gap:8px;color:var(--text2);font-size:13px}
+  .chk input{width:18px;height:18px;accent-color:var(--accent)}
+  .drop{border:1.5px dashed #3a4048;border-radius:10px;padding:26px;text-align:center;color:var(--text2);background:#121417;cursor:pointer}
+  .drop.over{border-color:var(--accent);background:var(--accentDim)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{color:var(--muted);font-size:11px;letter-spacing:.06em;text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+  td{padding:6px 8px;border-bottom:1px solid #1d2125;vertical-align:middle}
+  td input[type=text]{height:32px;width:100%}
+  .mono{font-family:ui-monospace,monospace}
+  .tbl{overflow-x:auto}
+  .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+  .b-new{background:var(--tealDim);color:var(--tealTxt)}
+  #log{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:12px;color:var(--text2);max-height:220px;overflow:auto;background:#0b0c0e;border-radius:8px;padding:10px;border:1px solid var(--line)}
+  .ok{color:var(--tealTxt)}.err{color:#ffb3b3}
+  .keyout{word-break:break-all}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .stat{background:var(--raised);border-radius:10px;padding:12px 14px}
+  .stat b{display:block;font-size:22px}
+  .stat span{color:var(--muted);font-size:11px;letter-spacing:.08em}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">AZ</div>
+  <div><h1>AZ BETAS · Admin</h1><small>AZIMXODJAYEV MUSIC</small></div>
+  <nav>
+    <button data-tab="upload" class="on">Yuklash</button>
+    <button data-tab="library">Kutubxona</button>
+    <button data-tab="keys">Kalitlar</button>
+    <button data-tab="settings">Sozlamalar</button>
+  </nav>
+</header>
+<main>
+
+<section id="settings">
+  <div class="card">
+    <h2>GitHub ulanishi</h2>
+    <p class="sub">Token faqat shu brauzerda saqlanadi. GitHub → Settings → Developer settings → Fine-grained token: faqat <b>AZ-Beats</b> repo, <b>Contents: Read and write</b>.</p>
+    <div class="row">
+      <label>Repo<input type="text" id="repo" value="alifrecords/AZ-Beats"></label>
+      <label>Branch<input type="text" id="branch" value="main"></label>
+      <label style="flex:2 1 320px">Token<input type="password" id="token" placeholder="github_pat_..."></label>
+      <button class="btn primary" id="saveConn">Saqlash va tekshirish</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Bepul limit</h2>
+    <p class="sub">Bepul foydalanuvchi DAW'da nechta loop ishlata oladi ("Bepul" belgili loop'lar bunga kirmaydi).</p>
+    <div class="row">
+      <label style="flex:0 1 160px">Loop soni<input type="number" id="freeLimit" min="0" max="500" value="10"></label>
+      <button class="btn primary" id="saveLimit">Saqlash</button>
+    </div>
+  </div>
+</section>
+
+<section id="upload" class="on">
+  <div class="card">
+    <h2>Yangi loop va sample yuklash</h2>
+    <p class="sub">Fayl yuklangach GitHub o'zi BPM, tonallik va taktni aniqlaydi, WAV'ni FLAC'ga o'giradi va katalogni yangilaydi (1–2 daqiqa). Fayl nomida BPM va tonallik bo'lsa ("Az - Doira 104 Am"), o'sha ishlatiladi.</p>
+    <div class="drop" id="drop">Fayllarni shu yerga tashlang yoki bosib tanlang<br><small style="color:var(--muted)">WAV, AIFF, FLAC, MP3 · bitta fayl 50 MB gacha</small></div>
+    <input type="file" id="files" multiple accept=".wav,.aif,.aiff,.flac,.mp3,.ogg" hidden>
+    <div id="picked" class="sub" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:6px">
+      <label>Kategoriya<input type="text" id="upCat" list="cats" placeholder="Drum loops"></label>
+      <label>Janr<input type="text" id="upGenre" list="genres" placeholder="O'zbek pop"></label>
+      <label>Teglar (vergul bilan)<input type="text" id="upTags" placeholder="doira, lazgi"></label>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label class="chk"><input type="checkbox" id="upFree">Bepul</label>
+      <label class="chk"><input type="checkbox" id="upDemo">Namuna (eng yaxshilar)</label>
+      <div style="flex:1"></div>
+      <button class="btn primary" id="uploadBtn" disabled>Yuklash</button>
+    </div>
+    <datalist id="cats"><option>Drum loops</option><option>Percussion</option><option>Bass</option><option>Melodik</option><option>One-shot</option><option>FX</option><option>Vokal</option></datalist>
+    <datalist id="genres"></datalist>
+  </div>
+  <div class="card"><h2>Jarayon</h2><div id="log">Tayyor.</div></div>
+</section>
+
+<section id="library">
+  <div class="card">
+    <div class="row" style="align-items:center">
+      <div style="flex:1 1 300px"><h2>Kutubxona</h2><p class="sub" id="libInfo">Yuklanmoqda...</p></div>
+      <button class="btn" id="reloadLib">Yangilash</button>
+      <button class="btn primary" id="saveMeta" disabled>O'zgarishlarni saqlash</button>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>NOMI</th><th>KATEGORIYA</th><th>JANR</th><th>BPM</th><th>TON</th><th>BEPUL</th><th>NAMUNA</th><th>QO'SHILGAN</th><th></th></tr></thead>
+        <tbody id="libBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="keys">
+  <div class="card">
+    <h2>Litsenziya kaliti berish</h2>
+    <p class="sub">To'lov kelgach, foydalanuvchiga kalit yarating va Telegram orqali yuboring. U kalitni plaginning "Akkaunt" bo'limiga qo'yadi.</p>
+    <div id="noKey" class="sub err" hidden>Avval pastda kalitlar juftligini yarating (bir marta).</div>
+    <div class="row">
+      <label>Foydalanuvchi (telefon yoki @telegram)<input type="text" id="kUser" placeholder="+998 90 123 45 67"></label>
+      <label style="flex:0 1 160px">Tarif<select id="kTier"><option value="start">Start · 25 000</option><option value="pro" selected>PRO · 50 000</option></select></label>
+      <label style="flex:0 1 200px">Muddat<select id="kDays"><option value="30">1 oy (30 kun)</option><option value="365">1 yil (PRO yillik 300 000)</option><option value="7">7 kun (sinov)</option></select></label>
+      <button class="btn primary" id="issue">Kalit yaratish</button>
+    </div>
+    <div id="keyBox" hidden style="margin-top:14px">
+      <label>Kalit<textarea id="keyOut" rows="4" readonly class="keyout"></textarea></label>
+      <div class="row" style="margin-top:8px"><button class="btn teal" id="copyKey">Nusxa olish</button><button class="btn" id="copyMsg">Telegram xabari bilan nusxa</button><div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Berilgan kalitlar</h2>
+    <div class="tbl"><table><thead><tr><th>SANA</th><th>FOYDALANUVCHI</th><th>TARIF</th><th>MUDDAT</th><th></th></tr></thead><tbody id="issuedBody"></tbody></table></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="exportCsv">CSV yuklab olish</button><div></div></div>
+  </div>
+  <div class="card">
+    <h2>Kalitlar juftligi (bir marta)</h2>
+    <p class="sub">Maxfiy kalit faqat shu brauzerda saqlanadi — zaxira faylini albatta yuklab oling va xavfsiz joyda saqlang. Ochiq kalit repoga yoziladi va plagin qayta yig'iladi.</p>
+    <div id="kpState" class="sub"></div>
+    <div class="row">
+      <button class="btn primary" id="genKp">Yangi juftlik yaratish</button>
+      <button class="btn" id="backupKp">Zaxirani yuklab olish</button>
+      <label class="btn" style="display:flex;align-items:center;justify-content:center">Zaxiradan tiklash<input type="file" id="restoreKp" accept=".json" hidden></label>
+      <div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script src="license.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const store = {
+    get: (k, d) => { try { const v = localStorage.getItem("azb_" + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set: (k, v) => { try { localStorage.setItem("azb_" + k, JSON.stringify(v)); } catch {} },
+  };
+  const log = (msg, cls) => {
+    const el = $("log");
+    const line = document.createElement("div");
+    if (cls) line.className = cls;
+    line.textContent = new Date().toLocaleTimeString() + "  " + msg;
+    if (el.textContent === "Tayyor.") el.textContent = "";
+    el.appendChild(line); el.scrollTop = el.scrollHeight;
+  };
+
+  // ---------- tabs
+  document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
+    document.querySelectorAll("nav button").forEach((x) => x.classList.toggle("on", x === b));
+    document.querySelectorAll("main section").forEach((s) => s.classList.toggle("on", s.id === b.dataset.tab));
+    if (b.dataset.tab === "library") loadLibrary();
+    if (b.dataset.tab === "keys") renderKeys();
+  });
+
+  // ---------- GitHub API
+  $("repo").value = store.get("repo", "alifrecords/AZ-Beats");
+  $("branch").value = store.get("branch", "main");
+  $("token").value = store.get("token", "");
+  const cfg = () => ({ repo: $("repo").value.trim(), branch: $("branch").value.trim() || "main", token: $("token").value.trim() });
+  const encPath = (p) => p.split("/").map(encodeURIComponent).join("/");
+  async function gh(method, path, body) {
+    const c = cfg();
+    if (!c.token) throw new Error("Token kiritilmagan (Sozlamalar)");
+    const url = `https://api.github.com/repos/${c.repo}/contents/${encPath(path)}` + (method === "GET" ? `?ref=${encodeURIComponent(c.branch)}&t=${Date.now()}` : "");
+    const r = await fetch(url, { method, headers: { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json" }, body: body ? JSON.stringify({ ...body, branch: c.branch }) : undefined });
+    if (r.status === 404 && method === "GET") return null;
+    if (!r.ok) throw new Error(`${method} ${path}: ${r.status} ${(await r.text()).slice(0, 200)}`);
+    return r.status === 204 ? {} : r.json();
+  }
+  const b64FromText = (t) => btoa(unescape(encodeURIComponent(t)));
+  const textFromB64 = (b) => decodeURIComponent(escape(atob(b.replace(/\n/g, ""))));
+  async function b64FromFile(file) {
+    const buf = new Uint8Array(await file.arrayBuffer());
+    let bin = ""; const step = 0x8000;
+    for (let i = 0; i < buf.length; i += step) bin += String.fromCharCode.apply(null, buf.subarray(i, i + step));
+    return btoa(bin);
+  }
+  async function getJson(path, fallback) {
+    const f = await gh("GET", path);
+    if (!f) return { data: fallback, sha: null };
+    return { data: JSON.parse(textFromB64(f.content)), sha: f.sha };
+  }
+  async function putText(path, text, message, sha) {
+    if (sha === undefined) { const f = await gh("GET", path); sha = f ? f.sha : null; }
+    return gh("PUT", path, { message, content: b64FromText(text), ...(sha ? { sha } : {}) });
+  }
+
+  $("saveConn").onclick = async () => {
+    const c = cfg(); store.set("repo", c.repo); store.set("branch", c.branch); store.set("token", c.token);
+    try {
+      const r = await fetch(`https://api.github.com/repos/${c.repo}`, { headers: { Authorization: "Bearer " + c.token } });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.message);
+      alert("Ulandi: " + j.full_name + (j.private ? " (private — kutubxona plaginga ko'rinmaydi, Public qiling!)" : " (public)"));
+      loadMeta();
+    } catch (e) { alert("Xato: " + e.message); }
+  };
+
+  // ---------- meta
+  let meta = null, metaSha = null, catalog = null, dirty = false;
+  async function loadMeta() {
+    const m = await getJson("library/meta.json", { freeLimit: 10, items: {} });
+    meta = m.data; metaSha = m.sha;
+    meta.items = meta.items || {};
+    $("freeLimit").value = meta.freeLimit ?? 10;
+    const genres = new Set(Object.values(meta.items).map((e) => e.genre).filter(Boolean));
+    $("genres").innerHTML = [...genres].map((g) => `<option>${g}</option>`).join("");
+    return meta;
+  }
+  async function saveMeta(msg) {
+    const r = await putText("library/meta.json", JSON.stringify(meta, null, 2), msg, metaSha);
+    metaSha = r.content.sha; dirty = false; $("saveMeta").disabled = true;
+  }
+
+  $("saveLimit").onclick = async () => {
+    try { await loadMeta(); meta.freeLimit = Math.max(0, parseInt($("freeLimit").value || "10", 10)); await saveMeta("Bepul limit: " + meta.freeLimit); alert("Saqlandi"); }
+    catch (e) { alert(e.message); }
+  };
+
+  // ---------- upload
+  let picked = [];
+  const drop = $("drop");
+  drop.onclick = () => $("files").click();
+  $("files").onchange = (e) => setPicked([...e.target.files]);
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); setPicked([...e.dataTransfer.files]); };
+  function setPicked(list) {
+    picked = list.filter((f) => /\.(wav|aiff?|flac|mp3|ogg)$/i.test(f.name));
+    $("picked").textContent = picked.length ? picked.map((f) => `${f.name} (${(f.size / 1e6).toFixed(1)} MB)`).join(", ") : "";
+    $("uploadBtn").disabled = !picked.length;
+  }
+  $("uploadBtn").onclick = async () => {
+    const cat = ($("upCat").value.trim() || "Loops").replace(/[\\/]/g, "-");
+    const genre = $("upGenre").value.trim();
+    const tags = $("upTags").value.split(",").map((s) => s.trim()).filter(Boolean);
+    $("uploadBtn").disabled = true;
+    try {
+      await loadMeta();
+      const today = new Date().toISOString().slice(0, 10);
+      for (const f of picked) {
+        if (f.size > 50e6) { log(`${f.name}: 50 MB dan katta, o'tkazib yuborildi`, "err"); continue; }
+        const path = `library/files/${cat}/${f.name}`;
+        log(`Yuklanmoqda: ${f.name} ...`);
+        const existing = await gh("GET", path);
+        await gh("PUT", path, { message: "Yangi: " + f.name, content: await b64FromFile(f), ...(existing ? { sha: existing.sha } : {}) });
+        const key = `files/${cat}/${f.name}`;
+        const old = meta.items[key] || {};
+        meta.items[key] = { ...old, name: old.name || f.name.replace(/\.[^.]+$/, ""), category: cat, genre: genre || old.genre || "",
+          tags: tags.length ? tags : (old.tags || []), free: $("upFree").checked, demo: $("upDemo").checked, added: old.added || today };
+        log(`OK: ${f.name}`, "ok");
+      }
+      await saveMeta(`Kutubxona: ${picked.length} ta fayl`);
+      log("meta.json saqlandi. GitHub Actions katalogni 1-2 daqiqada yangilaydi.", "ok");
+      setPicked([]);
+    } catch (e) { log(e.message, "err"); }
+    $("uploadBtn").disabled = !picked.length;
+  };
+
+  // ---------- library table
+  async function loadLibrary() {
+    $("libInfo").textContent = "Yuklanmoqda...";
+    try {
+      await loadMeta();
+      catalog = (await getJson("library/catalog.json", { items: [] })).data;
+      renderLibrary();
+    } catch (e) { $("libInfo").textContent = e.message; }
+  }
+  function renderLibrary() {
+    const byFile = {};
+    (catalog.items || []).forEach((it) => (byFile[it.file] = it));
+    const rows = Object.entries(meta.items).sort((a, b) => (b[1].added || "").localeCompare(a[1].added || ""));
+    $("libInfo").textContent = `${rows.length} ta fayl · bepul limit: ${meta.freeLimit ?? 10}`;
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    $("libBody").innerHTML = rows.map(([file, e]) => {
+      const c = byFile[file] || {};
+      const isNew = e.added && (Date.now() - new Date(e.added)) / 864e5 <= 14;
+      return `<tr data-file="${esc(file)}">
+        <td><input type="text" data-f="name" value="${esc(e.name)}"> ${isNew ? '<span class="badge b-new">YANGI</span>' : ""}</td>
+        <td><input type="text" data-f="category" value="${esc(e.category)}" disabled title="Kategoriya papkadan olinadi"></td>
+        <td><input type="text" data-f="genre" value="${esc(e.genre)}"></td>
+        <td><input type="text" data-f="bpm" value="${esc(e.bpm ?? c.bpm ?? "")}" style="width:70px"></td>
+        <td><input type="text" data-f="key" value="${esc(e.key ?? c.key ?? "")}" style="width:56px"></td>
+        <td><input type="checkbox" data-f="free" ${e.free ? "checked" : ""}></td>
+        <td><input type="checkbox" data-f="demo" ${e.demo ? "checked" : ""}></td>
+        <td class="mono">${esc(e.added)}</td>
+        <td><button class="btn danger" data-del>O'chirish</button></td></tr>`;
+    }).join("") || `<tr><td colspan="9" class="sub">Hali fayl yo'q</td></tr>`;
+    $("libBody").querySelectorAll("tr[data-file]").forEach((tr) => {
+      const file = tr.dataset.file;
+      tr.querySelectorAll("[data-f]").forEach((inp) => inp.onchange = () => {
+        const f = inp.dataset.f;
+        let v = inp.type === "checkbox" ? inp.checked : inp.value.trim();
+        if (f === "bpm") v = parseFloat(v) || 0;
+        meta.items[file][f] = v;
+        dirty = true; $("saveMeta").disabled = false;
+      });
+      tr.querySelector("[data-del]").onclick = async () => {
+        if (!confirm("O'chirilsinmi: " + file + " ?")) return;
+        try {
+          const f = await gh("GET", "library/" + file);
+          if (f) await gh("DELETE", "library/" + file, { message: "O'chirildi: " + file, sha: f.sha });
+          delete meta.items[file];
+          await saveMeta("Kutubxonadan o'chirildi");
+          renderLibrary();
+        } catch (e) { alert(e.message); }
+      };
+    });
+  }
+  $("reloadLib").onclick = loadLibrary;
+  $("saveMeta").onclick = async () => { try { await saveMeta("Kutubxona sozlamalari"); alert("Saqlandi. Katalog 1-2 daqiqada yangilanadi."); } catch (e) { alert(e.message); } };
+
+  // ---------- licence keys
+  const kp = () => store.get("privateJwk", null);
+  function renderKeys() {
+    const has = !!kp();
+    $("noKey").hidden = has;
+    $("issue").disabled = !has;
+    $("kpState").innerHTML = has ? '<span class="ok">Maxfiy kalit shu brauzerda bor.</span>' : '<span class="err">Kalitlar juftligi yo\'q.</span>';
+    const issued = store.get("issued", []);
+    $("issuedBody").innerHTML = issued.slice().reverse().map((k, i) =>
+      `<tr><td class="mono">${k.i}</td><td>${k.u}</td><td>${k.t.toUpperCase()}</td><td class="mono">${k.e} gacha</td><td><button class="btn" data-copy="${issued.length - 1 - i}">Nusxa</button></td></tr>`).join("")
+      || `<tr><td colspan="5" class="sub">Hali kalit berilmagan</td></tr>`;
+    $("issuedBody").querySelectorAll("[data-copy]").forEach((b) => b.onclick = () => navigator.clipboard.writeText(issued[+b.dataset.copy].key));
+  }
+  $("genKp").onclick = async () => {
+    if (kp() && !confirm("Yangi juftlik yaratilsa ESKI kalitlar ishlamay qoladi (plagin yangilangach). Davom etasizmi?")) return;
+    try {
+      const pair = await AZLicense.generateKeyPair();
+      store.set("privateJwk", pair.privateJwk);
+      downloadBackup();
+      await putText("config/license_public_key.txt", pair.publicKeyText + "\n", "Litsenziya ochiq kaliti");
+      alert("Tayyor! Ochiq kalit repoga yozildi — GitHub plaginni 10-15 daqiqada qayta yig'adi. Zaxira fayli yuklab olindi.");
+      renderKeys();
+    } catch (e) { alert("Xato: " + e.message); }
+  };
+  function downloadBackup() {
+    const j = kp(); if (!j) return alert("Kalit yo'q");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(j)], { type: "application/json" }));
+    a.download = "AZ-BETAS-private-key-BACKUP.json"; a.click();
+  }
+  $("backupKp").onclick = downloadBackup;
+  $("restoreKp").onchange = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try { const j = JSON.parse(await f.text()); if (!j.d || !j.n) throw new Error("Bu maxfiy kalit fayli emas"); store.set("privateJwk", j); renderKeys(); alert("Tiklandi"); }
+    catch (err) { alert(err.message); }
+  };
+  const addDays = (d) => { const t = new Date(); t.setDate(t.getDate() + d); return t.toISOString().slice(0, 10); };
+  let lastKey = null;
+  $("issue").onclick = async () => {
+    const u = $("kUser").value.trim();
+    if (!u) return alert("Foydalanuvchini kiriting");
+    const payload = { u, t: $("kTier").value, e: addDays(parseInt($("kDays").value, 10)), i: new Date().toISOString().slice(0, 10) };
+    const key = await AZLicense.issueKey(kp(), payload);
+    lastKey = { ...payload, key };
+    const issued = store.get("issued", []); issued.push(lastKey); store.set("issued", issued);
+    $("keyOut").value = key; $("keyBox").hidden = false;
+    renderKeys();
+  };
+  $("copyKey").onclick = () => navigator.clipboard.writeText($("keyOut").value);
+  $("copyMsg").onclick = () => {
+    if (!lastKey) return;
+    const msg = `Assalomu alaykum! AZ BETAS ${lastKey.t.toUpperCase()} obunangiz faollashtirildi (${lastKey.e} gacha).\n\n` +
+      `Plaginda "Akkaunt" bo'limiga quyidagi kalitni qo'ying va "Faollashtirish"ni bosing:\n\n${lastKey.key}\n\nAzimxodjayev Music`;
+    navigator.clipboard.writeText(msg);
+  };
+  $("exportCsv").onclick = () => {
+    const rows = [["sana", "foydalanuvchi", "tarif", "muddat", "kalit"], ...store.get("issued", []).map((k) => [k.i, k.u, k.t, k.e, k.key])];
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n")], { type: "text/csv" }));
+    a.download = "az-betas-kalitlar.csv"; a.click();
+  };
+
+  if (store.get("token", "")) loadMeta().catch(() => {});
+  renderKeys();
+})();
+</script>
+</body>
+</html>

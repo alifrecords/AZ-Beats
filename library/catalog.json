@@ -1,0 +1,28 @@
+{
+ "version": 1,
+ "updated": "2026-10-28T11:33:36Z",
+ "freeLimit": 10,
+ "items": [
+  {
+   "id": "az-grv-loops-no-ride-116-g",
+   "name": "Az - GrV Loops (no ride) 116 G",
+   "file": "files/Drum loops/Az - GrV Loops no ride 116 G.flac",
+   "category": "Drum loops",
+   "genre": "Groove / Shuffle",
+   "tags": [
+    "triplet",
+    "shuffle",
+    "sub",
+    "drums"
+   ],
+   "bpm": 116.0,
+   "bars": 8,
+   "key": "G",
+   "free": true,
+   "demo": true,
+   "added": "2026-10-28",
+   "size": 3533056,
+   "duration": 16.552
+  }
+ ]
+}

@@ -1,0 +1,61 @@
+name: Build AZ BETAS plug-in
+
+on:
+  push:
+    paths-ignore:
+      - "library/**"
+      - "admin/**"
+      - "**.md"
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows
+          - os: macos-latest
+            name: macOS
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get JUCE 8.0.4
+        run: git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
+
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        run: cmake -B build -A x64
+
+      - name: Configure (macOS universal)
+        if: runner.os == 'macOS'
+        run: cmake -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+      - name: Build VST3 + Standalone
+        run: cmake --build build --config Release --target AZBetas_VST3 AZBetas_Standalone
+
+      - name: Build AU (macOS)
+        if: runner.os == 'macOS'
+        run: cmake --build build --config Release --target AZBetas_AU
+
+      - name: Collect
+        shell: bash
+        run: |
+          mkdir -p out
+          cp -R build/AZBetas_artefacts/Release/VST3/*.vst3 out/
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            cp -R build/AZBetas_artefacts/Release/AU/*.component out/
+            cp -R build/AZBetas_artefacts/Release/Standalone/*.app out/
+          else
+            cp build/AZBetas_artefacts/Release/Standalone/*.exe out/
+          fi
+          cp README_UZ.md out/ || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AZ-BETAS-${{ matrix.name }}
+          path: out

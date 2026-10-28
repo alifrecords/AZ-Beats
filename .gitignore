@@ -1,0 +1,5 @@
+build/
+JUCE/
+*.pem
+private_key*
+.DS_Store
