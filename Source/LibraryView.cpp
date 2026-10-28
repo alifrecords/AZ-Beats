@@ -13,9 +13,12 @@ LibraryView::LibraryView (AZBetasProcessor& p, std::function<void (const juce::S
     search.onTextChange = [this] { refreshList(); };
     addAndMakeVisible (search);
 
-    styleLabel (catTitle, 11.0f, Theme::muted, true);   catTitle.setText ("KATEGORIYALAR", juce::dontSendNotification);
     styleLabel (genreTitle, 11.0f, Theme::muted, true); genreTitle.setText ("JANR", juce::dontSendNotification);
-    addAndMakeVisible (catTitle); addAndMakeVisible (genreTitle);
+    addAndMakeVisible (genreTitle);
+    sideView.setViewedComponent (&sideContent, false);
+    sideView.setScrollBarsShown (true, false);
+    sideView.setScrollBarThickness (5);
+    addAndMakeVisible (sideView);
 
     genre.onChange = [this] { refreshList(); };
     addAndMakeVisible (genre);
@@ -118,6 +121,8 @@ void LibraryView::changeListenerCallback (juce::ChangeBroadcaster* b)
 void LibraryView::setCategory (int idx)
 {
     categoryIndex = idx;
+    cover = {};
+    coverPackId = {};
     for (int i = 0; i < catButtons.size(); ++i)
         catButtons[i]->setToggleState (i == idx, juce::dontSendNotification);
     refreshList();
@@ -127,28 +132,65 @@ void LibraryView::refreshList()
 {
     auto items = proc.catalog->getItems();
 
-    // categories (rebuild buttons when the set changes)
-    juce::StringArray cats;
-    for (int i = 0; i < numFixedCats; ++i) cats.add (fixedCats[i]);
-    cats.addArray (proc.catalog->getCategories());
-    if (cats != categories)
+    // sidebar entries (rebuild buttons when the set changes)
+    std::vector<Entry> e;
+    for (int i = 0; i < numFixedCats; ++i) e.push_back ({ 0, juce::String (i), fixedCats[i] });
+    for (auto& pk : proc.catalog->getPacks())
+        e.push_back ({ 1, pk.id, pk.name });
+    for (auto& c : proc.catalog->getCategories())
+        e.push_back ({ 2, c, c });
+    juce::String sig;
+    for (auto& x : e) sig << x.kind << ":" << x.value << ":" << x.label << "|";
+    if (sig != entriesSignature)
     {
-        categories = cats;
+        const auto prev = juce::isPositiveAndBelow (categoryIndex, (int) entries.size()) ? entries[(size_t) categoryIndex] : Entry { 0, "0", "" };
+        entriesSignature = sig;
+        entries = e;
         catButtons.clear();
-        for (int i = 0; i < categories.size(); ++i)
+        sideLabels.clear();
+        categoryIndex = 0;
+        for (size_t i = 0; i < entries.size(); ++i)
         {
-            auto* b = catButtons.add (new juce::TextButton (categories[i]));
+            if (entries[i].kind == prev.kind && entries[i].value == prev.value) categoryIndex = (int) i;
+            auto* b = catButtons.add (new juce::TextButton (entries[i].label));
             b->setColour (juce::TextButton::buttonColourId, Theme::bg);
             b->setColour (juce::TextButton::buttonOnColourId, Theme::selected);
-            b->setColour (juce::TextButton::textColourOffId, Theme::text2);
+            b->setColour (juce::TextButton::textColourOffId, entries[i].kind == 1 ? Theme::accentTxt : Theme::text2);
             b->setColour (juce::TextButton::textColourOnId, Theme::text);
-            b->onClick = [this, i] { setCategory (i); };
-            addAndMakeVisible (b);
+            b->onClick = [this, i] { setCategory ((int) i); };
+            sideContent.addAndMakeVisible (b);
         }
-        categoryIndex = juce::jmin (categoryIndex, categories.size() - 1);
+        for (auto t : { "KUTUBXONA", "SAMPLE PACK'LAR", "KATEGORIYALAR" })
+        {
+            auto* l = sideLabels.add (new juce::Label());
+            styleLabel (*l, 11.0f, Theme::muted, true);
+            l->setText (t, juce::dontSendNotification);
+            sideContent.addAndMakeVisible (l);
+        }
         for (int i = 0; i < catButtons.size(); ++i)
             catButtons[i]->setToggleState (i == categoryIndex, juce::dontSendNotification);
-        resized();
+        layoutSide();
+    }
+    const Entry cur = juce::isPositiveAndBelow (categoryIndex, (int) entries.size()) ? entries[(size_t) categoryIndex] : Entry { 0, "0", "Hammasi" };
+    const int fixedIdx = cur.kind == 0 ? cur.value.getIntValue() : -1;
+
+    // pack cover
+    CatalogPack curPack;
+    if (cur.kind == 1)
+        for (auto& pk : proc.catalog->getPacks())
+            if (pk.id == cur.value) curPack = pk;
+    if (cur.kind == 1 && coverPackId != cur.value)
+    {
+        coverPackId = cur.value;
+        cover = {};
+        const auto id = cur.value;
+        juce::Component::SafePointer<LibraryView> safe (this);
+        proc.catalog->ensureFile (curPack.cover, [safe, id] (juce::File f)
+        {
+            if (safe == nullptr || safe->coverPackId != id || ! f.existsAsFile()) return;
+            safe->cover = juce::ImageFileFormat::loadFrom (f);
+            safe->repaint();
+        });
     }
 
     // genres
@@ -162,15 +204,15 @@ void LibraryView::refreshList()
 
     // filter
     const auto q = search.getText().trim().toLowerCase();
-    const auto cat = categories[categoryIndex];
     const auto selKey = proc.getSelected().key;
     filtered.clearQuick();
     for (auto& it : items)
     {
-        if (categoryIndex == 1 && ! it.isNew) continue;
-        if (categoryIndex == 2 && ! it.isFree) continue;
-        if (categoryIndex == 3 && ! it.isDemo) continue;
-        if (categoryIndex >= numFixedCats && it.category != cat) continue;
+        if (fixedIdx == 1 && ! it.isNew) continue;
+        if (fixedIdx == 2 && ! it.isFree) continue;
+        if (fixedIdx == 3 && ! it.isDemo) continue;
+        if (cur.kind == 1 && it.pack != cur.value) continue;
+        if (cur.kind == 2 && it.category != cur.value) continue;
         if (genre.getSelectedId() > 1 && it.genre != genre.getText()) continue;
         if (onlyFree.getToggleState() && ! it.isFree) continue;
         if (onlyMatchKey.getToggleState() && selKey.isNotEmpty() && it.key.isNotEmpty() && it.key != selKey) continue;
@@ -182,8 +224,13 @@ void LibraryView::refreshList()
         filtered.add (it);
     }
 
-    listTitle.setText (categoryIndex == 0 ? "Kutubxona" : cat, juce::dontSendNotification);
-    listSub.setText (juce::String (filtered.size()) + " ta  |  " + proc.catalog->getStatus(), juce::dontSendNotification);
+    listTitle.setText (fixedIdx == 0 ? "Kutubxona" : cur.label, juce::dontSendNotification);
+    if (cur.kind == 1)
+        listSub.setText ((curPack.description.isNotEmpty() ? curPack.description + "  |  " : juce::String())
+                         + juce::String (filtered.size()) + " / 10" + (curPack.isFree ? "  |  BEPUL PAKET" : ""), juce::dontSendNotification);
+    else
+        listSub.setText (juce::String (filtered.size()) + " ta  |  " + proc.catalog->getStatus(), juce::dontSendNotification);
+    resized();
     list.updateContent();
     list.repaint();
     updatePlayer();
@@ -335,6 +382,23 @@ void LibraryView::paint (juce::Graphics& g)
     g.setColour (Theme::line);
     g.fillRect (x0, y + 24, w, 1);
 
+    if (! coverArea.isEmpty())
+    {
+        auto cr = coverArea.toFloat();
+        if (cover.isValid())
+        {
+            juce::Path clip; clip.addRoundedRectangle (cr, 8.0f);
+            juce::Graphics::ScopedSaveState ss (g);
+            g.reduceClipRegion (clip);
+            g.drawImage (cover, cr, juce::RectanglePlacement::centred | juce::RectanglePlacement::fillDestination);
+        }
+        else
+        {
+            g.setColour (Theme::raised);
+            g.fillRoundedRectangle (cr, 8.0f);
+        }
+    }
+
     // player panel
     auto pl = getLocalBounds().withTrimmedLeft (231).removeFromBottom (150);
     g.setColour (Theme::panel);
@@ -360,24 +424,27 @@ void LibraryView::resized()
     r.removeFromLeft (1);
 
     search.setBounds (side.removeFromTop (36));
-    side.removeFromTop (14);
-    catTitle.setBounds (side.removeFromTop (18));
-    for (auto* b : catButtons)
-    {
-        b->setBounds (side.removeFromTop (30));
-        side.removeFromTop (2);
-    }
-    side.removeFromTop (12);
-    genreTitle.setBounds (side.removeFromTop (18));
-    genre.setBounds (side.removeFromTop (32));
-    side.removeFromTop (8);
-    onlyFree.setBounds (side.removeFromTop (26));
-    onlyMatchKey.setBounds (side.removeFromTop (26));
+    side.removeFromTop (10);
     refreshBtn.setBounds (side.removeFromBottom (34));
+    side.removeFromBottom (8);
+    onlyMatchKey.setBounds (side.removeFromBottom (26));
+    onlyFree.setBounds (side.removeFromBottom (26));
+    side.removeFromBottom (6);
+    genre.setBounds (side.removeFromBottom (32));
+    genreTitle.setBounds (side.removeFromBottom (18));
+    side.removeFromBottom (8);
+    sideView.setBounds (side);
+    layoutSide();
 
     auto player = r.removeFromBottom (150).reduced (18, 14);
     auto head = r.removeFromTop (64).reduced (18, 10);
     usage.setBounds (head.removeFromRight (260));
+    coverArea = {};
+    if (coverPackId.isNotEmpty())
+    {
+        coverArea = head.removeFromLeft (44).withSizeKeepingCentre (44, 44);
+        head.removeFromLeft (12);
+    }
     listTitle.setBounds (head.removeFromTop (26));
     listSub.setBounds (head);
     r.removeFromTop (26);
@@ -408,4 +475,31 @@ void LibraryView::resized()
     row1.removeFromLeft (8);
     toPad.setBounds (row1);
     dragBox.setBounds (right);
+}
+
+void LibraryView::layoutSide()
+{
+    const int w = juce::jmax (100, sideView.getWidth() - 8);
+    int y = 0;
+    auto label = [&] (int i) { if (i < sideLabels.size()) { sideLabels[i]->setBounds (0, y, w, 18); y += 20; } };
+    int lastKind = -1;
+    for (size_t i = 0; i < entries.size(); ++i)
+    {
+        if (entries[i].kind != lastKind)
+        {
+            if (lastKind != -1) y += 8;
+            label (entries[i].kind);
+            lastKind = entries[i].kind;
+        }
+        if ((int) i < catButtons.size())
+            catButtons[(int) i]->setBounds (0, y, w, 30);
+        y += 32;
+    }
+    for (int k = 0; k < sideLabels.size(); ++k)
+    {
+        bool used = false;
+        for (auto& e : entries) used = used || e.kind == k;
+        sideLabels[k]->setVisible (used);
+    }
+    sideContent.setSize (w, y);
 }

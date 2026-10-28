@@ -17,7 +17,12 @@ int main (int argc, char** argv)
     out.createDirectory();
 
     AZBetasProcessor proc;
-    if (argc > 2) { proc.catalog->setUrl (argv[2]); proc.catalog->refresh(); }
+    if (argc > 2)
+    {
+        proc.catalog->setUrl (argv[2]);
+        for (int i = 0; i < 100 && proc.catalog->isLoading(); ++i) pump (100);
+        proc.catalog->refresh();
+    }
     if (argc > 3) { auto info = proc.license->activate (argv[3]); std::cout << "licence: " << info.valid << " " << info.error << "\n"; }
     proc.prepareToPlay (48000.0, 512);
     for (int i = 0; i < 100 && proc.catalog->isLoading(); ++i) pump (100);
@@ -49,6 +54,8 @@ int main (int argc, char** argv)
     };
 
     snap ("1_kutubxona");
+    if (auto* lib = ed->findChildWithID ("library"))
+        if (auto* lv = dynamic_cast<LibraryView*> (lib)) { lv->setCategory (4); snap ("1b_pack"); lv->setCategory (0); }
     juce::String err;
     juce::String padErr;
     proc.assignSelectedToPad (0, padErr);

@@ -10,7 +10,7 @@
     --teal:#3bc9b0;--tealDim:#13342e;--tealTxt:#5fe0c6;--blue:#8fb6ff;--blueDim:#1e2a3f;--red:#e86f6f}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
-  header{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:5}
   .logo{width:36px;height:36px;border-radius:8px;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700}
   header h1{margin:0;font-size:18px;letter-spacing:.06em}
   header small{display:block;color:var(--muted);font-size:10px;letter-spacing:.18em}
@@ -20,17 +20,19 @@
   main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
   section{display:none}section.on{display:block}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
-  h2{margin:0 0 4px;font-size:20px}
+  h2{margin:0 0 4px;font-size:20px} h3{margin:0;font-size:16px}
   .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
   label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
-  input[type=text],input[type=password],input[type=number],select,textarea{height:40px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);font:13px inherit}
+  input[type=text],input[type=password],input[type=number],select,textarea{height:40px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);font:13px inherit;min-width:0}
   textarea{height:auto;padding:10px 12px;font-family:ui-monospace,monospace;font-size:12px}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
   .row>*{flex:1 1 180px}
   .btn{height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--line2);background:var(--raised);color:var(--text);font:600 13px inherit;cursor:pointer;flex:0 0 auto}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
   .btn.teal{background:var(--tealDim);border-color:#1f5a50;color:var(--tealTxt)}
+  .btn.gold{background:var(--accentDim);border-color:#5a4520;color:var(--accentTxt)}
   .btn.danger{background:#3a1d1d;border-color:#5a2a2a;color:#ffb3b3}
+  .btn.sm{height:32px;padding:0 10px;font-size:12px}
   .btn:disabled{opacity:.45;cursor:default}
   .chk{flex-direction:row;align-items:center;gap:8px;color:var(--text2);font-size:13px}
   .chk input{width:18px;height:18px;accent-color:var(--accent)}
@@ -39,25 +41,22 @@
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{color:var(--muted);font-size:11px;letter-spacing:.06em;text-align:left;padding:8px;border-bottom:1px solid var(--line)}
   td{padding:6px 8px;border-bottom:1px solid #1d2125;vertical-align:middle}
-  td input[type=text]{height:32px;width:100%}
+  td input[type=text],td select{height:32px;width:100%}
   .mono{font-family:ui-monospace,monospace}
   .tbl{overflow-x:auto}
   .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
-  .b-new{background:var(--tealDim);color:var(--tealTxt)}
-  #log{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:12px;color:var(--text2);max-height:220px;overflow:auto;background:#0b0c0e;border-radius:8px;padding:10px;border:1px solid var(--line)}
+  .b-new{background:var(--tealDim);color:var(--tealTxt)} .b-free{background:var(--blueDim);color:var(--blue)}
+  #log{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:12px;color:var(--text2);max-height:240px;overflow:auto;background:#0b0c0e;border-radius:8px;padding:10px;border:1px solid var(--line)}
   .ok{color:var(--tealTxt)}.err{color:#ffb3b3}
   .keyout{word-break:break-all}
-  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .stat{background:var(--raised);border-radius:10px;padding:12px 14px}
-  .stat b{display:block;font-size:22px}
-  .stat span{color:var(--muted);font-size:11px;letter-spacing:.08em}
   a{color:var(--accent)}
   .item{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:12px}
   .ihead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .ihead .meta{flex:1 1 220px;min-width:0}
-  .ihead .meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ihead .meta{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .ihead .meta input{height:36px;font-weight:600}
   .ihead .meta small{color:var(--muted)}
   .round{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--raised);color:var(--text);font-size:15px;cursor:pointer;flex:0 0 auto}
+  .round.sm{width:34px;height:34px;font-size:12px}
   .round.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
   .qual{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--raised)}
   .qual i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -67,11 +66,27 @@
   canvas.wave{width:100%;height:110px;display:block;margin-top:10px;border-radius:8px;background:#0b0c0e;cursor:crosshair;touch-action:none}
   .itools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--text2)}
   .itools input[type=number]{width:76px;height:34px}
+  .itools select{height:36px}
   .itools .btn{height:36px;padding:0 12px}
   .reasons{font-size:12px;color:var(--muted);margin-top:6px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .chip{padding:5px 10px;border-radius:999px;background:var(--raised);border:1px solid var(--line2);color:var(--text2);font-size:12px;cursor:pointer}
+  .chip:hover{border-color:var(--accent);color:var(--accentTxt)}
+  .fixbox{margin-top:8px;padding:8px 10px;border-radius:8px;background:#11201c;border:1px solid #1f5a50;font-size:12px;color:var(--tealTxt)}
   .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 10px}
   .bar div{height:100%;width:0;background:var(--accent);transition:width .2s}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+  .group{margin-top:18px}
+  .ghead{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
+  .ghead img,.cover{width:56px;height:56px;border-radius:8px;object-fit:cover;background:var(--raised);flex:0 0 auto}
+  .packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .pack{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .pack .img{aspect-ratio:1/1;background:var(--raised) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+  .pack .body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .pack .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+  .count{font-size:12px;color:var(--muted)} .count.full{color:var(--accentTxt)}
+  .preview{width:120px;height:120px;border-radius:10px;background:var(--raised) center/cover no-repeat;border:1px solid var(--line2);flex:0 0 auto}
+  @media (max-width:640px){ .ihead .meta{flex-basis:100%} }
 </style>
 </head>
 <body>
@@ -81,41 +96,28 @@
   <nav>
     <button data-tab="upload" class="on">Yuklash</button>
     <button data-tab="library">Kutubxona</button>
+    <button data-tab="packs">Paketlar</button>
     <button data-tab="keys">Kalitlar</button>
     <button data-tab="settings">Sozlamalar</button>
   </nav>
 </header>
 <main>
 
-<section id="settings">
-  <div class="card">
-    <h2>GitHub ulanishi</h2>
-    <p class="sub">Token faqat shu brauzerda saqlanadi. GitHub → Settings → Developer settings → Fine-grained token: faqat <b>AZ-Beats</b> repo, <b>Contents: Read and write</b>.</p>
-    <div class="row">
-      <label>Repo<input type="text" id="repo" value="alifrecords/AZ-Beats"></label>
-      <label>Branch<input type="text" id="branch" value="main"></label>
-      <label style="flex:2 1 320px">Token<input type="password" id="token" placeholder="github_pat_..."></label>
-      <button class="btn primary" id="saveConn">Saqlash va tekshirish</button>
-    </div>
-  </div>
-  <div class="card">
-    <h2>Bepul limit</h2>
-    <p class="sub">Bepul foydalanuvchi DAW'da nechta loop ishlata oladi ("Bepul" belgili loop'lar bunga kirmaydi).</p>
-    <div class="row">
-      <label style="flex:0 1 160px">Loop soni<input type="number" id="freeLimit" min="0" max="500" value="10"></label>
-      <button class="btn primary" id="saveLimit">Saqlash</button>
-    </div>
-  </div>
-</section>
-
+<!-- ============================ UPLOAD ============================ -->
 <section id="upload" class="on">
   <div class="card">
     <h2>Yangi loop va sample yuklash</h2>
-    <p class="sub">Har bir faylni yuklashdan oldin tinglang, kerak bo'lsa kesing. LUFS va sifat darhol ko'rinadi: <span class="q-good"><i class="dot" style="background:#3ccf6e"></i>yaxshi</span> · <span class="q-mid"><i class="dot" style="background:#f2c94c"></i>o'rta</span> · <span class="q-bad"><i class="dot" style="background:#ef5350"></i>yomon</span>. To'lqin ustida sichqoncha bilan qismni belgilang, chetlarini suring, bir marta bosish shu joydan tinglatadi. Yuklangach GitHub BPM, tonallik va taktni o'zi aniqlaydi (1–2 daqiqa).</p>
+    <p class="sub">Har bir faylni tinglang, nom bering, kerak bo'lsa kesing va <b>Avto sozlagich</b> bilan standartga keltiring. Sifat rangi: <span class="q-good"><i class="dot" style="background:#3ccf6e"></i>yaxshi</span> · <span class="q-mid"><i class="dot" style="background:#f2c94c"></i>o'rta</span> · <span class="q-bad"><i class="dot" style="background:#ef5350"></i>yomon</span>. To'lqin ustida sichqoncha bilan qism belgilang; bir marta bosish shu joydan tinglatadi.</p>
     <div class="drop" id="drop">Fayllarni shu yerga tashlang yoki bosib tanlang<br><small style="color:var(--muted)">WAV, AIFF, FLAC, MP3 · bitta fayl 50 MB gacha</small></div>
     <input type="file" id="files" multiple accept=".wav,.aif,.aiff,.flac,.mp3,.ogg" hidden>
+    <div class="row" id="bulkRow" style="margin-top:10px;display:none">
+      <div style="flex:1 1 300px" class="sub">Hamma fayllarga birdaniga:</div>
+      <button class="btn gold" id="fixAll">Hammasini avto sozlash</button>
+      <button class="btn" id="nameAll">Hammasiga avto nom</button>
+    </div>
     <div id="items"></div>
     <div class="row" style="margin-top:14px">
+      <label>Sample pack (har birida 10 tagacha)<select id="upPack"></select></label>
       <label>Kategoriya<input type="text" id="upCat" list="cats" placeholder="Drum loops"></label>
       <label>Janr<input type="text" id="upGenre" list="genres" placeholder="O'zbek pop"></label>
       <label>Teglar (vergul bilan)<input type="text" id="upTags" placeholder="doira, lazgi"></label>
@@ -133,6 +135,7 @@
   <div class="card"><h2>Jarayon</h2><div class="bar"><div id="prog"></div></div><div id="log">Tayyor.</div></div>
 </section>
 
+<!-- ============================ LIBRARY ============================ -->
 <section id="library">
   <div class="card">
     <div class="row" style="align-items:center">
@@ -140,15 +143,42 @@
       <button class="btn" id="reloadLib">Yangilash</button>
       <button class="btn primary" id="saveMeta" disabled>O'zgarishlarni saqlash</button>
     </div>
-    <div class="tbl">
-      <table>
-        <thead><tr><th>NOMI</th><th>KATEGORIYA</th><th>JANR</th><th>BPM</th><th>TON</th><th>LUFS</th><th>BEPUL</th><th>NAMUNA</th><th>QO'SHILGAN</th><th></th></tr></thead>
-        <tbody id="libBody"></tbody>
-      </table>
-    </div>
+    <p class="sub">▶ — tinglash. ▲▼ — paket ichidagi tartib (plaginda shu tartibda chiqadi). Paketni almashtirish uchun ustundagi ro'yxatdan tanlang.</p>
+    <div id="libGroups"></div>
   </div>
 </section>
 
+<!-- ============================ PACKS ============================ -->
+<section id="packs">
+  <div class="card">
+    <h2 id="packFormTitle">Yangi sample pack</h2>
+    <p class="sub">Har bir paket — alohida bo'lim, o'z muqovasi bilan, 10 tagacha loop / sample. Muqova avtomatik 800×800 kvadratga keltiriladi.</p>
+    <div class="row" style="align-items:flex-start">
+      <div class="preview" id="coverPreview"></div>
+      <div style="flex:1 1 400px;display:flex;flex-direction:column;gap:12px">
+        <div class="row">
+          <label>Paket nomi<input type="text" id="pName" placeholder="Az - Doira Vol. 1"></label>
+          <label>Janr<input type="text" id="pGenre" list="genres" placeholder="O'zbek pop"></label>
+        </div>
+        <label>Tavsif<input type="text" id="pDesc" placeholder="10 ta jonli doira va qayroq loop, 100–120 BPM"></label>
+        <div class="row" style="align-items:center">
+          <label class="btn" style="display:flex;align-items:center;justify-content:center">Muqova rasmi tanlash<input type="file" id="pCover" accept="image/*" hidden></label>
+          <label class="chk"><input type="checkbox" id="pFree">Butun paket bepul</label>
+          <div style="flex:1"></div>
+          <button class="btn" id="pCancel" hidden>Bekor qilish</button>
+          <button class="btn primary" id="pSave">Paketni saqlash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center"><div style="flex:1"><h2>Paketlar</h2><p class="sub" id="packInfo"></p></div>
+      <button class="btn primary" id="savePackOrder" disabled>Tartibni saqlash</button></div>
+    <div class="packs" id="packGrid"></div>
+  </div>
+</section>
+
+<!-- ============================ KEYS ============================ -->
 <section id="keys">
   <div class="card">
     <h2>Litsenziya kaliti berish</h2>
@@ -157,7 +187,7 @@
     <div class="row">
       <label>Foydalanuvchi (telefon yoki @telegram)<input type="text" id="kUser" placeholder="+998 90 123 45 67"></label>
       <label style="flex:0 1 160px">Tarif<select id="kTier"><option value="start">Start · 25 000</option><option value="pro" selected>PRO · 50 000</option></select></label>
-      <label style="flex:0 1 200px">Muddat<select id="kDays"><option value="30">1 oy (30 kun)</option><option value="365">1 yil (PRO yillik 300 000)</option><option value="7">7 kun (sinov)</option></select></label>
+      <label style="flex:0 1 220px">Muddat<select id="kDays"><option value="30">1 oy (30 kun)</option><option value="365">1 yil (PRO yillik 300 000)</option><option value="7">7 kun (sinov)</option></select></label>
       <button class="btn primary" id="issue">Kalit yaratish</button>
     </div>
     <div id="keyBox" hidden style="margin-top:14px">
@@ -172,7 +202,7 @@
   </div>
   <div class="card">
     <h2>Kalitlar juftligi (bir marta)</h2>
-    <p class="sub">Maxfiy kalit faqat shu brauzerda saqlanadi — zaxira faylini albatta yuklab oling va xavfsiz joyda saqlang. Ochiq kalit repoga yoziladi va plagin qayta yig'iladi.</p>
+    <p class="sub">Maxfiy kalit faqat shu brauzerda saqlanadi — zaxira faylini albatta yuklab oling. Ochiq kalit repoga yoziladi va plagin qayta yig'iladi.</p>
     <div id="kpState" class="sub"></div>
     <div class="row">
       <button class="btn primary" id="genKp">Yangi juftlik yaratish</button>
@@ -183,547 +213,32 @@
   </div>
 </section>
 
+<!-- ============================ SETTINGS ============================ -->
+<section id="settings">
+  <div class="card">
+    <h2>GitHub ulanishi</h2>
+    <p class="sub">Token faqat shu brauzerda saqlanadi. GitHub → Settings → Developer settings → Fine-grained token: faqat <b>AZ-Beats</b> repo, <b>Contents: Read and write</b>.</p>
+    <div class="row">
+      <label>Repo<input type="text" id="repo" value="alifrecords/AZ-Beats"></label>
+      <label>Branch<input type="text" id="branch" value="main"></label>
+      <label style="flex:2 1 320px">Token<input type="password" id="token" placeholder="github_pat_..."></label>
+      <button class="btn primary" id="saveConn">Saqlash va tekshirish</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Bepul limit</h2>
+    <p class="sub">Bepul foydalanuvchi DAW'da nechta loop ishlata oladi ("Bepul" belgili loop'lar va bepul paketlar bunga kirmaydi).</p>
+    <div class="row">
+      <label style="flex:0 1 160px">Loop soni<input type="number" id="freeLimit" min="0" max="500" value="10"></label>
+      <button class="btn primary" id="saveLimit">Saqlash</button>
+    </div>
+  </div>
+</section>
+
 </main>
+<audio id="player" preload="none"></audio>
 <script src="license.js"></script>
 <script src="audio.js"></script>
-<script>
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const store = {
-    get: (k, d) => { try { const v = localStorage.getItem("azb_" + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
-    set: (k, v) => { try { localStorage.setItem("azb_" + k, JSON.stringify(v)); } catch {} },
-  };
-  const log = (msg, cls) => {
-    const el = $("log");
-    const line = document.createElement("div");
-    if (cls) line.className = cls;
-    line.textContent = new Date().toLocaleTimeString() + "  " + msg;
-    if (el.textContent === "Tayyor.") el.textContent = "";
-    el.appendChild(line); el.scrollTop = el.scrollHeight;
-  };
-
-  // ---------- tabs
-  document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
-    document.querySelectorAll("nav button").forEach((x) => x.classList.toggle("on", x === b));
-    document.querySelectorAll("main section").forEach((s) => s.classList.toggle("on", s.id === b.dataset.tab));
-    if (b.dataset.tab === "library") loadLibrary();
-    if (b.dataset.tab === "keys") renderKeys();
-  });
-
-  // ---------- GitHub API
-  $("repo").value = store.get("repo", "alifrecords/AZ-Beats");
-  $("branch").value = store.get("branch", "main");
-  $("token").value = store.get("token", "");
-  const cfg = () => ({ repo: $("repo").value.trim(), branch: $("branch").value.trim() || "main", token: $("token").value.trim() });
-  const encPath = (p) => p.split("/").map(encodeURIComponent).join("/");
-  async function gh(method, path, body) {
-    const c = cfg();
-    if (!c.token) throw new Error("Token kiritilmagan (Sozlamalar)");
-    const url = `https://api.github.com/repos/${c.repo}/contents/${encPath(path)}` + (method === "GET" ? `?ref=${encodeURIComponent(c.branch)}&t=${Date.now()}` : "");
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 120000);
-    let r;
-    try {
-      r = await fetch(url, { method, signal: ctl.signal, headers: { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json" }, body: body ? JSON.stringify({ ...body, branch: c.branch }) : undefined });
-    } finally { clearTimeout(timer); }
-    if (r.status === 404 && method === "GET") return null;
-    if (!r.ok) throw new Error(`${method} ${path}: ${r.status} ${(await r.text()).slice(0, 200)}`);
-    return r.status === 204 ? {} : r.json();
-  }
-  const b64FromText = (t) => btoa(unescape(encodeURIComponent(t)));
-  const textFromB64 = (b) => decodeURIComponent(escape(atob(b.replace(/\n/g, ""))));
-  async function b64FromFile(file) {
-    const buf = new Uint8Array(await file.arrayBuffer());
-    let bin = ""; const step = 0x8000;
-    for (let i = 0; i < buf.length; i += step) bin += String.fromCharCode.apply(null, buf.subarray(i, i + step));
-    return btoa(bin);
-  }
-  async function getJson(path, fallback) {
-    const f = await gh("GET", path);
-    if (!f) return { data: fallback, sha: null };
-    return { data: JSON.parse(textFromB64(f.content)), sha: f.sha };
-  }
-  async function putText(path, text, message, sha) {
-    if (sha === undefined) { const f = await gh("GET", path); sha = f ? f.sha : null; }
-    return gh("PUT", path, { message, content: b64FromText(text), ...(sha ? { sha } : {}) });
-  }
-
-  $("saveConn").onclick = async () => {
-    const c = cfg(); store.set("repo", c.repo); store.set("branch", c.branch); store.set("token", c.token);
-    try {
-      const r = await fetch(`https://api.github.com/repos/${c.repo}`, { headers: { Authorization: "Bearer " + c.token } });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.message);
-      alert("Ulandi: " + j.full_name + (j.private ? " (private — kutubxona plaginga ko'rinmaydi, Public qiling!)" : " (public)"));
-      loadMeta();
-    } catch (e) { alert("Xato: " + e.message); }
-  };
-
-  // ---------- meta
-  let meta = null, metaSha = null, catalog = null, dirty = false;
-  async function loadMeta() {
-    const m = await getJson("library/meta.json", { freeLimit: 10, items: {} });
-    meta = m.data; metaSha = m.sha;
-    meta.items = meta.items || {};
-    $("freeLimit").value = meta.freeLimit ?? 10;
-    const genres = new Set(Object.values(meta.items).map((e) => e.genre).filter(Boolean));
-    $("genres").innerHTML = [...genres].map((g) => `<option>${g}</option>`).join("");
-    return meta;
-  }
-  async function saveMeta(msg) {
-    const r = await putText("library/meta.json", JSON.stringify(meta, null, 2), msg, metaSha);
-    metaSha = r.content.sha; dirty = false; $("saveMeta").disabled = true;
-  }
-
-  $("saveLimit").onclick = async () => {
-    try { await loadMeta(); meta.freeLimit = Math.max(0, parseInt($("freeLimit").value || "10", 10)); await saveMeta("Bepul limit: " + meta.freeLimit); alert("Saqlandi"); }
-    catch (e) { alert(e.message); }
-  };
-
-  // ---------- upload: preview, trim, loudness, robust transfer
-  let items = [];
-  let actx = null, playing = null;
-  const drop = $("drop");
-  const fmtT = (s) => s.toFixed(2) + " s";
-  const isNet = (e) => e && (e.name === "TypeError" || e.name === "AbortError");
-  drop.onclick = () => $("files").click();
-  $("files").onchange = (e) => { addFiles([...e.target.files]); e.target.value = ""; };
-  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
-  drop.ondragleave = () => drop.classList.remove("over");
-  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles([...e.dataTransfer.files]); };
-
-  function nameInfo(stem) {
-    const m = stem.match(/(?:^|\D)(\d{2,3})\s*(?:bpm)?(?!\d)/i);
-    const v = m ? parseInt(m[1], 10) : 0;
-    return v >= 60 && v <= 200 ? v : 0;
-  }
-
-  async function addFiles(list) {
-    for (const f of list) {
-      if (!/\.(wav|aiff?|flac|mp3|ogg)$/i.test(f.name)) { log(`${f.name}: audio emas, o'tkazildi`, "err"); continue; }
-      if (f.size > 50e6) { log(`${f.name}: 50 MB dan katta`, "err"); continue; }
-      const it = { id: Math.random().toString(36).slice(2), file: f, name: f.name, trimmed: false };
-      items.push(it);
-      renderItem(it, true);
-      try {
-        const d = await AZAudio.decode(f);
-        it.orig = d; it.channels = d.channels; it.sr = d.sampleRate;
-        it.sel = [0, it.channels[0].length];
-        it.bpm = nameInfo(f.name.replace(/\.[^.]+$/, ""));
-        it.an = AZAudio.analyse(it.channels, it.sr);
-      } catch (e) {
-        it.error = "Faylni o'qib bo'lmadi: " + e.message;
-      }
-      renderItem(it);
-    }
-    $("uploadBtn").disabled = !items.some((i) => i.channels);
-  }
-
-  function renderItem(it, loading) {
-    let el = document.getElementById("it_" + it.id);
-    if (!el) {
-      el = document.createElement("div");
-      el.className = "item"; el.id = "it_" + it.id;
-      $("items").appendChild(el);
-    }
-    if (loading || !it.channels) {
-      el.innerHTML = `<div class="ihead"><div class="meta"><b>${it.name}</b><small>${it.error ? `<span class="err">${it.error}</span>` : "Tahlil qilinmoqda..."}</small></div>
-        <button class="btn" data-rm>Olib tashlash</button></div>`;
-      el.querySelector("[data-rm]").onclick = () => removeItem(it);
-      return;
-    }
-    const a = it.an, len = it.channels[0].length / it.sr;
-    el.innerHTML = `
-      <div class="ihead">
-        <button class="round" data-play title="Tinglash">&#9654;</button>
-        <div class="meta"><b>${it.trimmed ? it.name.replace(/\.[^.]+$/, "") + ".wav" : it.name}</b>
-          <small>${(it.sr / 1000).toFixed(1)} kHz · ${fmtT(len)} · ${((it.trimmed ? it.channels[0].length * it.channels.length * 3 + 44 : it.file.size) / 1e6).toFixed(1)} MB${it.trimmed ? " · <b style='display:inline;color:var(--accentTxt)'>kesilgan → WAV 24-bit</b>" : ""}</small></div>
-        <div class="qual q-${a.rating.level}"><i></i>${a.lufs.toFixed(1)} LUFS · ${a.tp.toFixed(1)} dBTP · ${a.rating.text}</div>
-        <button class="btn" data-rm>Olib tashlash</button>
-      </div>
-      <canvas class="wave"></canvas>
-      <div class="itools">
-        <span data-seltxt></span>
-        <label class="chk" style="font-size:12px">BPM <input type="number" min="0" max="250" step="0.01" data-bpm value="${it.bpm || ""}" placeholder="—"></label>
-        <label class="chk" style="font-size:12px"><input type="checkbox" data-snap ${it.snap ? "checked" : ""}>Taktga moslash</label>
-        <label class="chk" style="font-size:12px"><input type="checkbox" data-fade ${it.fade !== false ? "checked" : ""}>Fade 3 ms</label>
-        <span style="flex:1"></span>
-        <button class="btn" data-selplay>Tanlovni tinglash</button>
-        <button class="btn" data-all>Hammasini tanlash</button>
-        <button class="btn teal" data-cut>Kesish</button>
-        ${it.trimmed ? '<button class="btn" data-undo>Asl holiga</button>' : ""}
-      </div>
-      <div class="reasons" data-reasons>Sifat: ${a.rating.reasons.join(", ")}${a.rating.level === "bad" ? " — plaginda AZ Modernize bilan tuzatish tavsiya etiladi" : ""}</div>`;
-    const cv = el.querySelector("canvas");
-    it.canvas = cv;
-    it.peaks = null;
-    el.querySelector("[data-rm]").onclick = () => removeItem(it);
-    el.querySelector("[data-play]").onclick = () => togglePlay(it, false);
-    el.querySelector("[data-selplay]").onclick = () => togglePlay(it, true);
-    el.querySelector("[data-all]").onclick = () => { it.sel = [0, it.channels[0].length]; updateSel(it); };
-    el.querySelector("[data-cut]").onclick = () => cut(it);
-    const undo = el.querySelector("[data-undo]");
-    if (undo) undo.onclick = () => { stop(); it.channels = it.orig.channels; it.trimmed = false; it.sel = [0, it.channels[0].length]; it.an = AZAudio.analyse(it.channels, it.sr); renderItem(it); };
-    el.querySelector("[data-bpm]").onchange = (e) => { it.bpm = parseFloat(e.target.value) || 0; snapSel(it); updateSel(it); };
-    el.querySelector("[data-snap]").onchange = (e) => { it.snap = e.target.checked; snapSel(it); updateSel(it); };
-    el.querySelector("[data-fade]").onchange = (e) => { it.fade = e.target.checked; };
-    attachCanvas(it);
-    updateSel(it);
-  }
-
-  function removeItem(it) {
-    if (playing && playing.it === it) stop();
-    items = items.filter((x) => x !== it);
-    const el = document.getElementById("it_" + it.id); if (el) el.remove();
-    $("uploadBtn").disabled = !items.some((i) => i.channels);
-  }
-
-  // ---- waveform + selection
-  function draw(it, head) {
-    const cv = it.canvas; if (!cv || !cv.isConnected) return;
-    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
-    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); it.peaks = null; }
-    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = it.channels[0].length, pts = Math.max(50, Math.floor(w / 2));
-    if (!it.peaks) it.peaks = AZAudio.peaks(it.channels, pts);
-    g.clearRect(0, 0, w, h);
-    const x0 = it.sel[0] / n * w, x1 = it.sel[1] / n * w;
-    g.fillStyle = "rgba(242,163,58,0.10)"; g.fillRect(x0, 0, x1 - x0, h);
-    let mx = 1e-4; for (const v of it.peaks) mx = Math.max(mx, Math.abs(v));
-    const bw = w / pts;
-    for (let i = 0; i < pts; i++) {
-      const lo = it.peaks[i * 2] / mx, hi = it.peaks[i * 2 + 1] / mx, x = i * bw;
-      const inSel = x >= x0 && x <= x1;
-      g.fillStyle = inSel ? "#f2a33a" : "#4a525c";
-      g.fillRect(x, h / 2 - hi * h * 0.45, Math.max(1, bw - 0.5), Math.max(1, (hi - lo) * h * 0.45));
-    }
-    // bar grid when BPM known
-    if (it.bpm > 0) {
-      const bar = 240 / it.bpm * it.sr;
-      g.fillStyle = "rgba(255,255,255,0.12)";
-      for (let p = bar; p < n; p += bar) g.fillRect(p / n * w, 0, 1, h);
-    }
-    g.fillStyle = "#e8eaed"; g.fillRect(x0, 0, 2, h); g.fillRect(x1 - 2, 0, 2, h);
-    if (head != null) { g.fillStyle = "#3bc9b0"; g.fillRect(head / n * w, 0, 2, h); }
-  }
-
-  function snapSel(it) {
-    if (!it.snap || !(it.bpm > 0)) return;
-    const n = it.channels[0].length, beat = 60 / it.bpm * it.sr, bar = beat * 4;
-    let a = Math.round(it.sel[0] / beat) * beat;
-    let bars = Math.max(1, Math.round((it.sel[1] - a) / bar));
-    if (a + bars * bar > n + beat * 0.25) bars = Math.max(1, Math.floor((n - a) / bar + 0.01));
-    it.sel = [Math.max(0, Math.round(a)), Math.min(n, Math.round(a + bars * bar))];
-  }
-
-  function updateSel(it) {
-    const el = document.getElementById("it_" + it.id); if (!el) return;
-    const [a, b] = it.sel, sr = it.sr;
-    let t = `Tanlov: ${fmtT(a / sr)} – ${fmtT(b / sr)} (${fmtT((b - a) / sr)})`;
-    if (it.bpm > 0) t += ` · ${((b - a) / sr * it.bpm / 240).toFixed(2)} takt`;
-    el.querySelector("[data-seltxt]").textContent = t;
-    draw(it);
-  }
-
-  function attachCanvas(it) {
-    const cv = it.canvas;
-    let mode = null, anchor = 0, moved = false;
-    const pos = (e) => { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * it.channels[0].length; };
-    cv.onpointerdown = (e) => {
-      cv.setPointerCapture(e.pointerId);
-      const p = pos(e), n = it.channels[0].length, tol = n * 8 / cv.clientWidth;
-      moved = false;
-      if (Math.abs(p - it.sel[0]) < tol) mode = "a";
-      else if (Math.abs(p - it.sel[1]) < tol) mode = "b";
-      else { mode = "new"; anchor = p; }
-    };
-    cv.onpointermove = (e) => {
-      if (!mode) return;
-      const p = Math.round(pos(e));
-      moved = true;
-      if (mode === "a") it.sel[0] = Math.min(p, it.sel[1] - 1);
-      else if (mode === "b") it.sel[1] = Math.max(p, it.sel[0] + 1);
-      else it.sel = [Math.round(Math.min(anchor, p)), Math.round(Math.max(anchor, p))];
-      updateSel(it);
-    };
-    cv.onpointerup = (e) => {
-      if (mode === "new" && !moved) { play(it, Math.round(pos(e)), it.channels[0].length); }
-      else { snapSel(it); updateSel(it); }
-      mode = null;
-    };
-    new ResizeObserver(() => draw(it)).observe(cv);
-  }
-
-  // ---- playback
-  function stop() {
-    if (playing) {
-      try { playing.src.stop(); } catch (e) {}
-      const el = document.getElementById("it_" + playing.it.id);
-      if (el) el.querySelector("[data-play]")?.classList.remove("on");
-      draw(playing.it);
-      playing = null;
-    }
-  }
-  function play(it, from, to, loop) {
-    stop();
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const n = to - from; if (n <= 0) return;
-    const buf = actx.createBuffer(2, n, it.sr);
-    for (let c = 0; c < 2; c++) buf.copyToChannel(it.channels[c].subarray(from, to), c);
-    const src = actx.createBufferSource(); src.buffer = buf; src.loop = !!loop;
-    src.connect(actx.destination); src.start();
-    const t0 = actx.currentTime;
-    playing = { it, src, from, n, t0, loop };
-    const el = document.getElementById("it_" + it.id);
-    el.querySelector("[data-play]").classList.add("on");
-    src.onended = () => { if (playing && playing.src === src) stop(); };
-    const tick = () => {
-      if (!playing || playing.src !== src) return;
-      let el2 = (actx.currentTime - t0) * it.sr;
-      if (loop) el2 %= n;
-      draw(it, from + Math.min(el2, n));
-      requestAnimationFrame(tick);
-    };
-    tick();
-  }
-  function togglePlay(it, selOnly) {
-    if (playing && playing.it === it) { stop(); return; }
-    if (selOnly) play(it, it.sel[0], it.sel[1], true);
-    else play(it, 0, it.channels[0].length, false);
-  }
-
-  function cut(it) {
-    const [a, b] = it.sel, n = it.channels[0].length;
-    if (a <= 0 && b >= n) { alert("Avval to'lqin ustida sichqoncha bilan qism tanlang"); return; }
-    stop();
-    const fade = it.fade !== false ? Math.min(Math.floor((b - a) / 2), Math.round(0.003 * it.sr)) : 0;
-    it.channels = it.channels.map((ch) => {
-      const out = ch.slice(a, b);
-      for (let i = 0; i < fade; i++) { const g = i / fade; out[i] *= g; out[out.length - 1 - i] *= g; }
-      return out;
-    });
-    it.trimmed = true;
-    it.sel = [0, it.channels[0].length];
-    it.an = AZAudio.analyse(it.channels, it.sr);
-    renderItem(it);
-    log(`${it.name}: kesildi (${fmtT((b - a) / it.sr)}), LUFS ${it.an.lufs.toFixed(1)}`, "ok");
-  }
-
-  // ---- robust transfer: retries, timeouts and automatic chunking
-  async function putBinary(path, bytes) {
-    let lastErr;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        const existing = await gh("GET", path);
-        let bin = ""; const step = 0x8000;
-        for (let i = 0; i < bytes.length; i += step) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
-        return await gh("PUT", path, { message: "Yuklash: " + path.split("/").pop(), content: btoa(bin), ...(existing ? { sha: existing.sha } : {}) });
-      } catch (e) {
-        lastErr = e;
-        if (!isNet(e) && !/409|422|5\d\d/.test(e.message)) throw e;
-        await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
-      }
-    }
-    throw lastErr;
-  }
-
-  async function putFileRobust(path, bytes, onProgress) {
-    const MIN = 128 * 1024;
-    let chunk = store.get("chunkSize", 4 * 1024 * 1024);
-    for (;;) {
-      try {
-        if (bytes.length <= chunk) { await putBinary(path, bytes); onProgress(1); return; }
-        const n = Math.ceil(bytes.length / chunk), pad = (x) => String(x).padStart(3, "0");
-        log(`  ${n} bo'lakda yuborilmoqda (${Math.round(chunk / 1024)} KB)`);
-        for (let i = 0; i < n; i++) {
-          await putBinary(`${path}.part-${pad(i + 1)}-of-${pad(n)}`, bytes.subarray(i * chunk, Math.min(bytes.length, (i + 1) * chunk)));
-          onProgress((i + 1) / n);
-        }
-        return;
-      } catch (e) {
-        if (!isNet(e) || chunk <= MIN) throw e;
-        chunk = Math.max(MIN, chunk >> 1);
-        store.set("chunkSize", chunk);
-        log(`  Tarmoq so'rovni uzdi — kichikroq bo'laklarga o'tilmoqda (${Math.round(chunk / 1024)} KB)`, "err");
-      }
-    }
-  }
-
-  $("testConn").onclick = async () => {
-    const c = cfg();
-    if (!c.token) return alert("Avval Sozlamalar bo'limida tokenni kiriting");
-    try {
-      const r = await fetch(`https://api.github.com/repos/${c.repo}`, { headers: { Authorization: "Bearer " + c.token } });
-      const j = await r.json();
-      if (!r.ok) throw new Error(r.status + " " + j.message);
-      if (!j.permissions || !j.permissions.push) throw new Error("Tokenda yozish huquqi yo'q (Contents: Read and write kerak)");
-      log(`Ulanish yaxshi: ${j.full_name}, yozish huquqi bor`, "ok");
-    } catch (e) {
-      log("Ulanish xatosi: " + (isNet(e) ? "internet / VPN / antivirus GitHub'ga ulanishni to'sdi" : e.message), "err");
-    }
-  };
-
-  $("uploadBtn").onclick = async () => {
-    const cat = ($("upCat").value.trim() || "Loops").replace(/[\\/]/g, "-");
-    const genre = $("upGenre").value.trim();
-    const tags = $("upTags").value.split(",").map((s) => s.trim()).filter(Boolean);
-    const ready = items.filter((i) => i.channels);
-    if (!ready.length) return;
-    stop();
-    $("uploadBtn").disabled = true;
-    const prog = $("prog");
-    try {
-      await loadMeta();
-      const today = new Date().toISOString().slice(0, 10);
-      let done = 0;
-      for (const it of ready) {
-        const fname = it.trimmed ? it.name.replace(/\.[^.]+$/, "") + ".wav" : it.name;
-        const bytes = it.trimmed ? AZAudio.encodeWav24(it.channels, it.sr) : it.orig.bytes;
-        const key = `files/${cat}/${fname}`;
-        log(`Yuklanmoqda: ${fname} (${(bytes.length / 1e6).toFixed(1)} MB, ${it.an.lufs.toFixed(1)} LUFS)`);
-        await putFileRobust("library/" + key, bytes, (f) => { prog.style.width = ((done + f) / ready.length * 100).toFixed(0) + "%"; });
-        const old = meta.items[key] || {};
-        meta.items[key] = { ...old, name: old.name || fname.replace(/\.[^.]+$/, ""), category: cat, genre: genre || old.genre || "",
-          tags: tags.length ? tags : (old.tags || []), free: $("upFree").checked, demo: $("upDemo").checked, added: old.added || today,
-          ...(it.bpm > 0 ? { bpm: it.bpm } : {}) };
-        done++;
-        log(`OK: ${fname}`, "ok");
-        removeItem(it);
-      }
-      await saveMeta(`Kutubxona: ${done} ta fayl`);
-      prog.style.width = "100%";
-      log("Tayyor. GitHub katalogni 1-2 daqiqada yangilaydi.", "ok");
-    } catch (e) {
-      log((isNet(e) ? "Tarmoq xatosi: so'rov GitHub'ga yetib bormadi (internet, VPN yoki antivirus). Qayta urinib ko'ring yoki boshqa tarmoqdan yuklang. " : "Xato: ") + e.message, "err");
-    }
-    $("uploadBtn").disabled = !items.some((i) => i.channels);
-  };
-
-  // ---------- library table
-  async function loadLibrary() {
-    $("libInfo").textContent = "Yuklanmoqda...";
-    try {
-      await loadMeta();
-      catalog = (await getJson("library/catalog.json", { items: [] })).data;
-      renderLibrary();
-    } catch (e) { $("libInfo").textContent = e.message; }
-  }
-  function lufsCell(l, tp) {
-    if (l == null) return '<span class="sub">tahlil kutilmoqda</span>';
-    const r = AZAudio.rate(l, tp ?? -6, 0, 10);
-    const col = { good: "#3ccf6e", mid: "#f2c94c", bad: "#ef5350" }[r.level];
-    return `<span title="${r.reasons.join(", ")}"><i class="dot" style="background:${col}"></i>${Number(l).toFixed(1)}</span>`;
-  }
-  function renderLibrary() {
-    const byFile = {};
-    (catalog.items || []).forEach((it) => (byFile[it.file] = it));
-    const rows = Object.entries(meta.items).sort((a, b) => (b[1].added || "").localeCompare(a[1].added || ""));
-    $("libInfo").textContent = `${rows.length} ta fayl · bepul limit: ${meta.freeLimit ?? 10}`;
-    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-    $("libBody").innerHTML = rows.map(([file, e]) => {
-      const c = byFile[file] || {};
-      const isNew = e.added && (Date.now() - new Date(e.added)) / 864e5 <= 14;
-      return `<tr data-file="${esc(file)}">
-        <td><input type="text" data-f="name" value="${esc(e.name)}"> ${isNew ? '<span class="badge b-new">YANGI</span>' : ""}</td>
-        <td><input type="text" data-f="category" value="${esc(e.category)}" disabled title="Kategoriya papkadan olinadi"></td>
-        <td><input type="text" data-f="genre" value="${esc(e.genre)}"></td>
-        <td><input type="text" data-f="bpm" value="${esc(e.bpm ?? c.bpm ?? "")}" style="width:70px"></td>
-        <td><input type="text" data-f="key" value="${esc(e.key ?? c.key ?? "")}" style="width:56px"></td>
-        <td style="white-space:nowrap">${lufsCell(e.lufs ?? c.lufs, e.tp ?? c.tp)}</td>
-        <td><input type="checkbox" data-f="free" ${e.free ? "checked" : ""}></td>
-        <td><input type="checkbox" data-f="demo" ${e.demo ? "checked" : ""}></td>
-        <td class="mono">${esc(e.added)}</td>
-        <td><button class="btn danger" data-del>O'chirish</button></td></tr>`;
-    }).join("") || `<tr><td colspan="10" class="sub">Hali fayl yo'q</td></tr>`;
-    $("libBody").querySelectorAll("tr[data-file]").forEach((tr) => {
-      const file = tr.dataset.file;
-      tr.querySelectorAll("[data-f]").forEach((inp) => inp.onchange = () => {
-        const f = inp.dataset.f;
-        let v = inp.type === "checkbox" ? inp.checked : inp.value.trim();
-        if (f === "bpm") v = parseFloat(v) || 0;
-        meta.items[file][f] = v;
-        dirty = true; $("saveMeta").disabled = false;
-      });
-      tr.querySelector("[data-del]").onclick = async () => {
-        if (!confirm("O'chirilsinmi: " + file + " ?")) return;
-        try {
-          const f = await gh("GET", "library/" + file);
-          if (f) await gh("DELETE", "library/" + file, { message: "O'chirildi: " + file, sha: f.sha });
-          delete meta.items[file];
-          await saveMeta("Kutubxonadan o'chirildi");
-          renderLibrary();
-        } catch (e) { alert(e.message); }
-      };
-    });
-  }
-  $("reloadLib").onclick = loadLibrary;
-  $("saveMeta").onclick = async () => { try { await saveMeta("Kutubxona sozlamalari"); alert("Saqlandi. Katalog 1-2 daqiqada yangilanadi."); } catch (e) { alert(e.message); } };
-
-  // ---------- licence keys
-  const kp = () => store.get("privateJwk", null);
-  function renderKeys() {
-    const has = !!kp();
-    $("noKey").hidden = has;
-    $("issue").disabled = !has;
-    $("kpState").innerHTML = has ? '<span class="ok">Maxfiy kalit shu brauzerda bor.</span>' : '<span class="err">Kalitlar juftligi yo\'q.</span>';
-    const issued = store.get("issued", []);
-    $("issuedBody").innerHTML = issued.slice().reverse().map((k, i) =>
-      `<tr><td class="mono">${k.i}</td><td>${k.u}</td><td>${k.t.toUpperCase()}</td><td class="mono">${k.e} gacha</td><td><button class="btn" data-copy="${issued.length - 1 - i}">Nusxa</button></td></tr>`).join("")
-      || `<tr><td colspan="5" class="sub">Hali kalit berilmagan</td></tr>`;
-    $("issuedBody").querySelectorAll("[data-copy]").forEach((b) => b.onclick = () => navigator.clipboard.writeText(issued[+b.dataset.copy].key));
-  }
-  $("genKp").onclick = async () => {
-    if (kp() && !confirm("Yangi juftlik yaratilsa ESKI kalitlar ishlamay qoladi (plagin yangilangach). Davom etasizmi?")) return;
-    try {
-      const pair = await AZLicense.generateKeyPair();
-      store.set("privateJwk", pair.privateJwk);
-      downloadBackup();
-      await putText("config/license_public_key.txt", pair.publicKeyText + "\n", "Litsenziya ochiq kaliti");
-      alert("Tayyor! Ochiq kalit repoga yozildi — GitHub plaginni 10-15 daqiqada qayta yig'adi. Zaxira fayli yuklab olindi.");
-      renderKeys();
-    } catch (e) { alert("Xato: " + e.message); }
-  };
-  function downloadBackup() {
-    const j = kp(); if (!j) return alert("Kalit yo'q");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(j)], { type: "application/json" }));
-    a.download = "AZ-BETAS-private-key-BACKUP.json"; a.click();
-  }
-  $("backupKp").onclick = downloadBackup;
-  $("restoreKp").onchange = async (e) => {
-    const f = e.target.files[0]; if (!f) return;
-    try { const j = JSON.parse(await f.text()); if (!j.d || !j.n) throw new Error("Bu maxfiy kalit fayli emas"); store.set("privateJwk", j); renderKeys(); alert("Tiklandi"); }
-    catch (err) { alert(err.message); }
-  };
-  const addDays = (d) => { const t = new Date(); t.setDate(t.getDate() + d); return t.toISOString().slice(0, 10); };
-  let lastKey = null;
-  $("issue").onclick = async () => {
-    const u = $("kUser").value.trim();
-    if (!u) return alert("Foydalanuvchini kiriting");
-    const payload = { u, t: $("kTier").value, e: addDays(parseInt($("kDays").value, 10)), i: new Date().toISOString().slice(0, 10) };
-    const key = await AZLicense.issueKey(kp(), payload);
-    lastKey = { ...payload, key };
-    const issued = store.get("issued", []); issued.push(lastKey); store.set("issued", issued);
-    $("keyOut").value = key; $("keyBox").hidden = false;
-    renderKeys();
-  };
-  $("copyKey").onclick = () => navigator.clipboard.writeText($("keyOut").value);
-  $("copyMsg").onclick = () => {
-    if (!lastKey) return;
-    const msg = `Assalomu alaykum! AZ BETAS ${lastKey.t.toUpperCase()} obunangiz faollashtirildi (${lastKey.e} gacha).\n\n` +
-      `Plaginda "Akkaunt" bo'limiga quyidagi kalitni qo'ying va "Faollashtirish"ni bosing:\n\n${lastKey.key}\n\nAzimxodjayev Music`;
-    navigator.clipboard.writeText(msg);
-  };
-  $("exportCsv").onclick = () => {
-    const rows = [["sana", "foydalanuvchi", "tarif", "muddat", "kalit"], ...store.get("issued", []).map((k) => [k.i, k.u, k.t, k.e, k.key])];
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n")], { type: "text/csv" }));
-    a.download = "az-betas-kalitlar.csv"; a.click();
-  };
-
-  if (store.get("token", "")) loadMeta().catch(() => {});
-  renderKeys();
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>

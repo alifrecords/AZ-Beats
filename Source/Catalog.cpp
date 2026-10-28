@@ -69,6 +69,12 @@ juce::StringArray LibraryCatalog::getCategories() const
     return c;
 }
 
+juce::Array<CatalogPack> LibraryCatalog::getPacks() const
+{
+    const juce::ScopedLock sl (lock);
+    return packs;
+}
+
 juce::StringArray LibraryCatalog::getGenres() const
 {
     const juce::ScopedLock sl (lock);
@@ -112,6 +118,8 @@ bool LibraryCatalog::parse (const juce::String& jsonText)
         it.isFree   = (bool) v["free"];
         it.isDemo   = (bool) v["demo"];
         it.size     = (juce::int64) v["size"];
+        it.pack     = v["pack"].toString();
+        it.order    = (int) v["order"];
         it.isNew    = isRecent (it.added);
         it.isEarly  = ! it.isFree && isRecent (it.added, 3.0);
         if (auto* tags = v["tags"].getArray())
@@ -121,15 +129,34 @@ bool LibraryCatalog::parse (const juce::String& jsonText)
             parsed.add (it);
     }
 
-    // newest first, then name
-    std::stable_sort (parsed.begin(), parsed.end(), [] (const CatalogItem& a, const CatalogItem& b)
+    juce::Array<CatalogPack> parsedPacks;
+    if (auto* parr = json["packs"].getArray())
+        for (auto& v : *parr)
+        {
+            CatalogPack pk;
+            pk.id = v["id"].toString();
+            pk.name = v["name"].toString();
+            pk.description = v["description"].toString();
+            pk.genre = v["genre"].toString();
+            pk.cover = v["cover"].toString();
+            pk.isFree = (bool) v["free"];
+            pk.count = (int) v["count"];
+            if (pk.id.isNotEmpty()) parsedPacks.add (pk);
+        }
+
+    // catalog v2 is already in the admin's order; older catalogs: newest first
+    bool hasOrder = ! parsed.isEmpty();
+    for (auto& it : parsed) hasOrder = hasOrder && it.order > 0;
+    std::stable_sort (parsed.begin(), parsed.end(), [hasOrder] (const CatalogItem& a, const CatalogItem& b)
     {
+        if (hasOrder) return a.order < b.order;
         if (a.added != b.added) return a.added > b.added;
         return a.name < b.name;
     });
 
     const juce::ScopedLock sl (lock);
     items = parsed;
+    packs = parsedPacks;
     freeLimit = json.hasProperty ("freeLimit") ? (int) json["freeLimit"] : 10;
     return true;
 }
@@ -217,10 +244,21 @@ void LibraryCatalog::ensureLocal (const CatalogItem& item, std::function<void (j
         done (localFileFor (item));
         return;
     }
+    download (resolve (item.file), localFileFor (item), std::move (done));
+}
 
-    auto target = localFileFor (item);
-    auto url = resolve (item.file);
+void LibraryCatalog::ensureFile (const juce::String& relativePath, std::function<void (juce::File)> done)
+{
+    if (relativePath.isEmpty()) { done ({}); return; }
+    auto target = getCacheDir().getChildFile ("files")
+                    .getChildFile (juce::File::createLegalFileName (relativePath.replaceCharacter ('/', '_')));
+    target.getParentDirectory().createDirectory();
+    if (target.existsAsFile() && target.getSize() > 0) { done (target); return; }
+    download (resolve (relativePath), target, std::move (done));
+}
 
+void LibraryCatalog::download (const juce::URL& url, const juce::File& target, std::function<void (juce::File)> done)
+{
     pool.addJob ([url, target, done]
     {
         auto tmp = target.getSiblingFile (target.getFileName() + ".part");

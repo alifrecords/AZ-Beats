@@ -14,6 +14,7 @@ AZBetasEditor::AZBetasEditor (AZBetasProcessor& p)
         library->refreshList();
         repaint();
     });
+    library->setComponentID ("library");
     addChildComponent (*library);
     addChildComponent (*modernize);
     addChildComponent (*padsView);

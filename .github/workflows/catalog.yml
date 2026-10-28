@@ -6,6 +6,7 @@ on:
     paths:
       - "library/files/**"
       - "library/meta.json"
+      - "library/packs/**"
   workflow_dispatch:
 
 concurrency:

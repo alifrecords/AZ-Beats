@@ -14,9 +14,19 @@ struct CatalogItem
     bool isDemo = false;   // admin marked "namuna" (showcase)
     bool isNew = false;    // added within the last 14 days
     bool isEarly = false;  // added within the last 3 days: PRO early access
+    juce::String pack;     // sample pack id ("" = none)
+    int order = 0;         // admin defined order (catalog order)
     juce::int64 size = 0;
 
     bool isLoop() const    { return bpm > 0.0; }
+};
+
+// A sample pack: own section with a cover, up to 10 items
+struct CatalogPack
+{
+    juce::String id, name, description, genre, cover;
+    bool isFree = false;
+    int count = 0;
 };
 
 // Downloads catalog.json and the audio files, keeps an offline cache.
@@ -40,6 +50,7 @@ public:
     const CatalogItem* find (const juce::String& id) const; // pointer valid until next refresh (message thread)
     juce::StringArray getCategories() const;
     juce::StringArray getGenres() const;
+    juce::Array<CatalogPack> getPacks() const;
     int getFreeLimit() const                { return freeLimit; }
 
     // Local cache for audio files
@@ -50,6 +61,8 @@ public:
     // Download (if needed) and call back on the message thread with the file
     // (or File() on failure).
     void ensureLocal (const CatalogItem& item, std::function<void (juce::File)> done);
+    // Any other library file (e.g. a pack cover), cached under Library/files
+    void ensureFile (const juce::String& relativePath, std::function<void (juce::File)> done);
 
     bool parse (const juce::String& jsonText); // public for tests
 
@@ -58,7 +71,9 @@ private:
     juce::URL resolve (const juce::String& relative) const;
 
     mutable juce::CriticalSection lock;
+    void download (const juce::URL& url, const juce::File& target, std::function<void (juce::File)> done);
     juce::Array<CatalogItem> items;
+    juce::Array<CatalogPack> packs;
     juce::String status;
     int freeLimit = 10;
     std::atomic<bool> loading { false };

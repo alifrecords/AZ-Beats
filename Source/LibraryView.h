@@ -15,6 +15,7 @@ public:
     void resized() override;
     void tick();              // called by the editor timer (~30 fps)
     void refreshList();
+    void setCategory (int idx);
 
 private:
     // ListBoxModel
@@ -25,7 +26,6 @@ private:
 
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
     void updatePlayer();
-    void setCategory (int idx);
 
     AZBetasProcessor& proc;
     std::function<void (const juce::String&)> notify;
@@ -33,9 +33,20 @@ private:
 
     juce::TextEditor search;
     juce::Label catTitle, genreTitle, listTitle, listSub, playerTitle, playerSub, usage;
+    // sidebar: fixed filters, sample packs, categories (scrollable)
+    struct Entry { int kind; juce::String value, label; };   // kind: 0 fixed, 1 pack, 2 category
+    std::vector<Entry> entries;
     juce::OwnedArray<juce::TextButton> catButtons;
-    juce::StringArray categories;
+    juce::OwnedArray<juce::Label> sideLabels;
+    juce::Viewport sideView;
+    juce::Component sideContent;
     int categoryIndex = 0;
+    juce::String entriesSignature;
+    void layoutSide();
+    // cover of the selected pack
+    juce::Image cover;
+    juce::String coverPackId;
+    juce::Rectangle<int> coverArea;
     juce::ComboBox genre;
     juce::ToggleButton onlyFree { "Faqat bepullar" }, onlyMatchKey { "Tonallik mos (tanlanganga)" };
     juce::TextButton refreshBtn { "Yangilash" };

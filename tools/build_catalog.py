@@ -166,6 +166,7 @@ def main():
         with open(META, encoding="utf-8") as f:
             meta = json.load(f)
     meta.setdefault("freeLimit", 10)
+    packs = meta.setdefault("packs", {})
     items = meta.setdefault("items", {})
     today = datetime.date.today().isoformat()
 
@@ -217,9 +218,27 @@ def main():
         print("O'chirildi:", k)
         del items[k]
 
+    # packs: ordered sections, max 10 items each
+    pack_order = {pid: i for i, (pid, _) in enumerate(sorted(packs.items(), key=lambda kv: (kv[1].get("order", 999), kv[1].get("name", ""))))}
+    for rel, e in items.items():
+        if e.get("pack") and e["pack"] not in packs:
+            print("Paket topilmadi, olib tashlandi:", rel, e["pack"])
+            e.pop("pack")
+    for pid in packs:
+        n = sum(1 for e in items.values() if e.get("pack") == pid)
+        if n > 10:
+            print(f"OGOHLANTIRISH: '{packs[pid].get('name')}' paketida {n} ta fayl (limit 10)")
+
+    def sort_key(kv):
+        rel, e = kv
+        po = pack_order.get(e.get("pack"), 10 ** 6)
+        added = e.get("added", "")
+        # newest first inside a group unless the admin set an order
+        return (po, e.get("order", 10 ** 6), "".join(chr(0x10FFFF - ord(c)) for c in added), rel)
+
     out = []
     used = set()
-    for rel, e in sorted(items.items(), key=lambda kv: (kv[1].get("added", ""), kv[0]), reverse=True):
+    for rel, e in sorted(items.items(), key=sort_key):
         base = slug(e.get("name") or os.path.basename(rel))
         iid, n = base, 2
         while iid in used:
@@ -229,7 +248,9 @@ def main():
             "id": iid, "name": e.get("name"), "file": rel,
             "category": e.get("category", ""), "genre": e.get("genre", ""),
             "tags": e.get("tags", []), "bpm": e.get("bpm", 0), "bars": e.get("bars", 0),
-            "key": e.get("key", ""), "free": bool(e.get("free")), "demo": bool(e.get("demo")),
+            "key": e.get("key", ""), "demo": bool(e.get("demo")),
+            "free": bool(e.get("free")) or bool(packs.get(e.get("pack"), {}).get("free")),
+            "pack": e.get("pack", ""), "order": len(out) + 1,
             "added": e.get("added", today), "size": os.path.getsize(os.path.join(LIB, rel)),
             "duration": e.get("duration", 0),
             "lufs": e.get("lufs"), "tp": e.get("tp"),
@@ -237,7 +258,13 @@ def main():
 
     with open(META, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
-    catalog = {"version": 1, "updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    pack_list = []
+    for pid, i in sorted(pack_order.items(), key=lambda kv: kv[1]):
+        p = packs[pid]
+        pack_list.append({"id": pid, "name": p.get("name", pid), "description": p.get("description", ""),
+                          "genre": p.get("genre", ""), "free": bool(p.get("free")), "cover": p.get("cover", ""),
+                          "count": sum(1 for it in out if it["pack"] == pid), "created": p.get("created", "")})
+    catalog = {"version": 2, "packs": pack_list, "updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                "freeLimit": int(meta.get("freeLimit", 10)), "items": out}
     with open(CATALOG, "w", encoding="utf-8") as f:
         json.dump(catalog, f, ensure_ascii=False, indent=1)
