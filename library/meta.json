@@ -39,7 +39,7 @@
       "bars": 8,
       "duration": 17
     },
-    "files/Drum loops/Az - Soyada o'yna Beat 131.wav": {
+    "files/Drum loops/Az - Soyada o'yna Beat 131.flac": {
       "name": "Az - Soyada o'yna Beat 131",
       "category": "Drum loops",
       "genre": "Folk",
@@ -52,7 +52,10 @@
       "order": 3,
       "lufs": -11.1,
       "tp": -1.2,
-      "bpm": 131
+      "bpm": 131,
+      "key": "",
+      "bars": 4,
+      "duration": 7.328
     }
   },
   "packs": {}
