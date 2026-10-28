@@ -21,22 +21,6 @@
       "lufs": -14.7,
       "tp": -1.2
     },
-    "files/Loops/Full Mix 115.flac": {
-      "name": "Full Mix 115",
-      "category": "Loops",
-      "genre": "",
-      "tags": [],
-      "free": true,
-      "demo": false,
-      "added": "2026-10-28",
-      "order": 1,
-      "lufs": -30.3,
-      "tp": -12.1,
-      "bpm": 115,
-      "key": "",
-      "bars": 2,
-      "duration": 4.174
-    },
     "files/Drum loops/Az - Bozor Groove.flac": {
       "name": "Az - Bozor Groove",
       "category": "Drum loops",
