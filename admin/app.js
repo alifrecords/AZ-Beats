@@ -217,7 +217,7 @@
 
   function renderItem(it, loading) {
     let el = document.getElementById("it_" + it.id);
-    if (!el) { el = document.createElement("div"); el.className = "item"; el.id = "it_" + it.id; $("items").appendChild(el); }
+    if (!el) { el = document.createElement("div"); el.className = "item"; el.id = "it_" + it.id; (it.container || $("items")).appendChild(el); }
     if (loading || !it.channels) {
       el.innerHTML = `<div class="ihead"><div class="meta"><b>${esc(it.name)}</b><small>${it.error ? `<span class="err">${esc(it.error)}</span>` : "Tahlil qilinmoqda..."}</small></div>
         <button class="btn" data-rm>Olib tashlash</button></div>`;
@@ -235,7 +235,7 @@
           <small>${esc(it.name)} · ${(it.sr / 1000).toFixed(1)} kHz · ${fmtT(len)} · ${(size / 1e6).toFixed(1)} MB${modified ? " · <b style='color:var(--accentTxt)'>o'zgartirilgan → WAV 24-bit</b>" : ""}</small>
         </div>
         ${qualHtml(a)}
-        <button class="btn" data-rm>Olib tashlash</button>
+        ${it.existing ? `<button class="btn primary" data-save>Saqlash (almashtirish)</button><button class="btn" data-rm>Yopish</button>` : `<button class="btn" data-rm>Olib tashlash</button>`}
       </div>
       <div class="chips" data-chips></div>
       <canvas class="wave"></canvas>
@@ -263,6 +263,7 @@
     it.peaks = null;
     const q = (s) => el.querySelector(s);
     q("[data-rm]").onclick = () => removeItem(it);
+    if (q("[data-save]")) q("[data-save]").onclick = () => saveEdited(it);
     q("[data-play]").onclick = () => togglePlay(it, false);
     q("[data-selplay]").onclick = () => togglePlay(it, true);
     q("[data-all]").onclick = () => { it.sel = [0, it.channels[0].length]; updateSel(it); };
@@ -296,6 +297,7 @@
   function removeItem(it) {
     if (playing && playing.it === it) stop();
     items = items.filter((x) => x !== it);
+    if (it.existing) { editing = null; }
     const el = document.getElementById("it_" + it.id); if (el) el.remove();
     refreshUploadState();
   }
@@ -588,7 +590,7 @@
             <td><input type="checkbox" data-f="free" ${e.free ? "checked" : ""}></td>
             <td><input type="checkbox" data-f="demo" ${e.demo ? "checked" : ""}></td>
             <td style="white-space:nowrap"><button class="btn sm" data-up ${idx === 0 ? "disabled" : ""}>▲</button> <button class="btn sm" data-down ${idx === rows.length - 1 ? "disabled" : ""}>▼</button></td>
-            <td><button class="btn sm danger" data-del>O'chirish</button></td></tr>`;
+            <td style="white-space:nowrap"><button class="btn sm gold" data-edit>Tahrirlash</button> <button class="btn sm danger" data-del>O'chirish</button></td></tr>`;
         }).join("") || `<tr><td colspan="11" class="sub">Bu paketda hali fayl yo'q</td></tr>`}
         </tbody></table></div></div>`;
     }).join("") || `<p class="sub">Hali fayl yo'q</p>`;
@@ -612,6 +614,7 @@
       });
       tr.querySelector("[data-up]").onclick = () => move(file, -1);
       tr.querySelector("[data-down]").onclick = () => move(file, +1);
+      tr.querySelector("[data-edit]").onclick = () => openEditor(file);
       tr.querySelector("[data-del]").onclick = () => {
         if (!confirm("O'chirilsinmi: " + effective(file).name + " ? (saqlaganingizda o'chadi)")) return;
         setEdit(file, "__deleted", true); renderLibrary();
@@ -642,6 +645,66 @@
     btn.classList.add("on"); btn.innerHTML = "&#9632;";
     libPlaying = { file, btn };
     player.onended = () => stopAll();
+  }
+  // ---- edit an already uploaded file: download, fix, save back in place
+  let editing = null;
+  async function openEditor(file) {
+    if (editing) { if (!confirm("Ochiq tahrirlash yopilsinmi?")) return; removeItem(editing); }
+    stopAll();
+    const e = effective(file);
+    const box = $("libEditor");
+    box.innerHTML = `<div class="sub" style="margin:0">Tahrirlash: <b>${esc(e.name)}</b> — yuklanmoqda...</div>`;
+    box.scrollIntoView({ behavior: "smooth", block: "start" });
+    try {
+      const r = await fetch(rawUrl(file) + "?t=" + Date.now());
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const blob = await r.blob();
+      const name = file.split("/").pop();
+      const f = new File([blob], name);
+      const d = await AZAudio.decode(f);
+      box.innerHTML = "";
+      const it = { id: "edit_" + Math.random().toString(36).slice(2), file: f, name, title: e.name || stem(name),
+        trimmed: false, fixed: false, target: "auto", existing: { file }, container: box,
+        orig: d, channels: d.channels, sr: d.sampleRate, bpm: e.bpm || 0, key: e.key || "" };
+      it.sel = [0, it.channels[0].length];
+      it.an = AZAudio.analyse(it.channels, it.sr);
+      editing = it;
+      renderItem(it);
+    } catch (err) {
+      box.innerHTML = `<div class="sub err" style="margin:0">Faylni ochib bo'lmadi: ${esc(err.message)}</div>`;
+    }
+  }
+  async function saveEdited(it) {
+    const oldKey = it.existing.file;
+    const dir = oldKey.split("/").slice(0, -1).join("/");
+    const title = safeName(it.title || stem(it.name)) || stem(it.name);
+    const modified = it.trimmed || it.fixed;
+    const newKey = modified ? `${dir}/${title}.wav` : `${dir}/${title}${(oldKey.match(/\.[^.]+$/) || [".wav"])[0]}`;
+    const btn = document.querySelector("#it_" + it.id + " [data-save]");
+    if (btn) { btn.disabled = true; btn.textContent = "Saqlanmoqda..."; }
+    stop();
+    try {
+      if (modified) {
+        await putFileRobust("library/" + newKey, AZAudio.encodeWav24(it.channels, it.sr));
+        if (newKey !== oldKey) await deletePath("library/" + oldKey, "Almashtirildi: " + oldKey);
+      } else if (newKey !== oldKey) {
+        // only renamed: keep the audio, just move the metadata name
+      }
+      const lufs = +it.an.lufs.toFixed(1), tp = +it.an.tp.toFixed(1);
+      await updateMeta("Tahrirlandi: " + title, (m) => {
+        const k = findKey(m, oldKey);
+        const entry = { ...(k ? m.items[k] : {}), name: title, lufs, tp, ...(it.bpm > 0 ? { bpm: it.bpm } : {}) };
+        if (modified) { delete entry.duration; delete entry.bars; } // re-analysed by GitHub (takt, davomiylik)
+        if (k && (modified ? k !== newKey : false)) delete m.items[k];
+        m.items[modified ? newKey : (k || oldKey)] = entry;
+      });
+      removeItem(it);
+      $("libEditor").innerHTML = `<div class="sub ok" style="margin:0">Saqlandi: ${esc(title)} — ${lufs} LUFS. Katalog 1-2 daqiqada yangilanadi.</div>`;
+      await loadLibrary();
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = "Saqlash (almashtirish)"; }
+      alert((isNet(e) ? "Tarmoq xatosi: " : "Xato: ") + e.message);
+    }
   }
   $("reloadLib").onclick = loadLibrary;
   $("saveMeta").onclick = async () => {
